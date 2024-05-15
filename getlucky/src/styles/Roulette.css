@@ -1,0 +1,147 @@
+
+
+.roulette-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #daa520;
+  }
+  
+  .betting-table {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+  }
+  
+  .number {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 2px;
+  }
+
+  .green {
+    background-color: green;
+  }
+  
+  .red {
+    background-color: red;
+  }
+  
+  .black {
+    background-color: black;
+  }
+  
+  .categories {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  
+  .betting-category {
+    margin: 5px;
+    padding: 10px;
+    background-color: white;
+    border: 2px solid #daa520;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .spin-button {
+    padding: 10px 20px;
+    background-color: #daa520;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .roulette-wheel {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin-top: 20px;
+    border: 10px solid #daa520;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #333;
+  }
+  
+  .wheel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform-origin: center center;
+  }
+  
+  .wheel-slice {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 50%, 100% 0, 100% 100%);
+    transform-origin: 50% 50%;
+  }
+  
+  .wheel-number {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform-origin: center;
+    display: block;
+  }
+  
+  .green {
+    background-color: green;
+  }
+  
+  .red {
+    background-color: red;
+  }
+  
+  .black {
+    background-color: black;
+  }
+  
+  .ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+  }
+  
+  .result-message {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  
+  .spinning .wheel {
+    animation: spin 3s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  
+  
+  

@@ -21,6 +21,32 @@ export const Home = ({ userAddress }) => {
     navigate('/');
   };
 
+  const handleProfile = () => {
+    navigate('/profile');
+  }
+
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [lastResults, setLastResults] = useState([]);
+
+  const LOTTERY_INTERVAL = 3600; // 1 hour in seconds
+
+  useEffect(() => {
+    const now = Math.floor(Date.now() / 1000);
+    const nextDrawTime = Math.ceil(now / LOTTERY_INTERVAL) * LOTTERY_INTERVAL;
+    setTimeLeft(nextDrawTime - now);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : LOTTERY_INTERVAL));
+    }, 1000);
+
+    const savedLastResults = localStorage.getItem('lastLotteryResult');
+    if (savedLastResults) {
+      setLastResults(JSON.parse(savedLastResults));
+    }
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="home-container">
       <header className="home-header">
@@ -34,10 +60,22 @@ export const Home = ({ userAddress }) => {
           </button>
         </div>
       </header>
+      <div className="ticker-container">
+        <div className="ticker-wrap">
+          <div className="ticker-move">
+            <div className="ticker-item">Next lottery draw in: {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? `0${timeLeft % 60}` : timeLeft % 60}</div>
+            <div className="ticker-item">Last winning numbers: {lastResults.join(', ')}</div>
+            <div className="ticker-item">Buy your ticket now and win big!</div>
+            <div className="ticker-item">Lottery ticket price: 10 EliEllaCoins</div>
+            <div className="ticker-item">Roulette ticket price: 5 EliEllaCoins</div>
+            <div className="ticker-item">Dice ticket price: 2 EliEllaCoins</div>
+          </div>
+        </div>
+      </div>
       <div className={`profile-menu ${showProfileMenu ? 'open' : ''}`}>
         <button onClick={toggleProfileMenu} className="close-button">&times;</button>
         <p>{userAddress}</p>
-        <button onClick={() => alert('Profile settings')}>Profile settings</button>
+        <button onClick={handleProfile}>Profile settings</button>
         <button onClick={handleLogout}>Logout</button>
       </div>
       <div className="games-container">

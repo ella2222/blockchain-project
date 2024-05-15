@@ -1,0 +1,174 @@
+.lottery-container {
+    padding: 20px;
+    text-align: center;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  .lottery-container h1 {
+    font-size: 2.5rem;
+    color: #daa520;
+    margin-bottom: 20px;
+  }
+  
+  .lottery-container p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .buy-ticket-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+  }
+  
+  .buy-ticket-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
+  .ticket {
+    margin-top: 20px;
+  }
+  
+  .ticket h2 {
+    font-size: 1.5rem;
+    color: #daa520;
+    margin-bottom: 20px;
+  }
+  
+  .ticket-container {
+    background: linear-gradient(to bottom right, #3d3d3d, #1e1e1e);
+    border: 2px solid #daa520;
+    border-radius: 10px;
+    padding: 20px;
+    display: inline-block;
+  }
+  
+  .numbers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .number {
+    background-color: #333;
+    border: 1px solid #daa520;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    border-radius: 50%;
+  }
+  
+  .number.selected {
+    background-color: #daa520;
+    transform: scale(1.1);
+  }
+  
+  .number:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
+  .submit-ticket-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.3s;
+  }
+  
+  .submit-ticket-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
+  .message {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  
+  .winner-announcement {
+    margin-top: 40px;
+  }
+  
+  .winner-announcement h2 {
+    font-size: 2rem;
+    color: #daa520;
+  }
+  
+  .winner-announcement p {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .lottery-result {
+    margin-top: 40px;
+  }
+  
+  .lottery-result h2 {
+    font-size: 2rem;
+    color: #daa520;
+  }
+  
+  .lottery-result p {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .selected-numbers {
+    margin-top: 20px;
+  }
+  
+  .selected-numbers h3 {
+    font-size: 1.5rem;
+    color: #daa520;
+  }
+  
+  .selected-numbers p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+  
+  .time-left {
+    margin-top: 20px;
+  }
+  
+  .time-left h3 {
+    font-size: 1.5rem;
+    color: #daa520;
+  }
+  
+  .time-left p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+  
+  .last-results {
+    margin-top: 40px;
+  }
+  
+  .last-results h2 {
+    font-size: 2rem;
+    color: #daa520;
+  }
+  
+  .last-results p {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
