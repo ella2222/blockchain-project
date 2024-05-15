@@ -1,0 +1,151 @@
+/* General styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+  
+  .home-container {
+    padding: 20px;
+    text-align: center;
+    background-color: #1e1e1e;
+    min-height: 100vh;
+  }
+  
+  .home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #000000;
+    border-bottom: 2px solid #daa520;
+  }
+  
+  .home-title {
+    font-size: 2.5rem;
+    color: #daa520;
+    font-weight: bold;
+  }
+  
+  .logo-container-home {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo-home {
+    width: 50px;
+    margin-right: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);
+  }
+  
+  .user-profile {
+    position: relative;
+  }
+  
+  .profile-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+  }
+  
+  .profile-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .profile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #222222;
+    border-left: 2px solid #daa520;
+    padding: 20px;
+    width: 300px;
+    height: 100%;
+    text-align: left;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+    transform: translateX(100%);
+    z-index: 1000;
+  }
+  
+  .profile-menu.open {
+    transform: translateX(0);
+  }
+  
+  .profile-menu .close-button {
+    background: none;
+    border: none;
+    color: #daa520;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+  }
+  
+  .profile-menu p {
+    margin: 60px 0 20px;
+    color: #daa520;
+    font-weight: bold;
+  }
+  
+  .profile-menu button {
+    background-color: transparent;
+    border: none;
+    color: #daa520;
+    padding: 10px 0;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  .profile-menu button:hover {
+    background-color: #daa520;
+    color: #111111;
+    border-radius: 5px;
+    
+  }
+  
+  .games-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 50px;
+  }
+  
+  .game-card {
+    background-color: #222222;
+    border: 2px solid #daa520;
+    border-radius: 10px;
+    margin: 20px;
+    padding: 20px;
+    width: 250px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .game-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.7);
+  }
+  
+  .game-thumbnail {
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .game-title {
+    margin-top: 10px;
+    color: #daa520;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
