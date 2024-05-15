@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
+import { useWallet } from '../utils/Context';
 
 export const Home = ({ userAddress }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -11,11 +12,12 @@ export const Home = ({ userAddress }) => {
     setShowProfileMenu(!showProfileMenu);
   };
   
-
+  const {wallet, initializeWallet} = useWallet();
 
   const handleLogout = (e) => {
     e.preventDefault();
     setIsLogged(false);
+    initializeWallet(false);
     navigate('/');
   };
 
