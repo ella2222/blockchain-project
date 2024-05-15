@@ -1,0 +1,106 @@
+.dice-container {
+    padding: 20px;
+    text-align: center;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  .dice-container h1 {
+    font-size: 2.5rem;
+    color: #daa520;
+    margin-bottom: 20px;
+  }
+  
+  .dice-container p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .bet-container {
+    margin-bottom: 20px;
+  }
+  
+  .bet-container label {
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+  
+  .bet-container input {
+    padding: 5px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .play-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+    margin-left: 10px;
+  }
+  
+  .play-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
+  .results {
+    margin-top: 20px;
+  }
+  
+  .dice-results {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .user-dice, .computer-dice {
+    font-size: 1.2rem;
+  }
+  
+  .message {
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .replay-button {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+  }
+  
+  .replay-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+  }
+  
+  .back-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }

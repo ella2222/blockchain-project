@@ -28,23 +28,13 @@ export const Home = ({ userAddress }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [lastResults, setLastResults] = useState([]);
 
-  const LOTTERY_INTERVAL = 3600; // 1 hour in seconds
 
   useEffect(() => {
-    const now = Math.floor(Date.now() / 1000);
-    const nextDrawTime = Math.ceil(now / LOTTERY_INTERVAL) * LOTTERY_INTERVAL;
-    setTimeLeft(nextDrawTime - now);
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : LOTTERY_INTERVAL));
-    }, 1000);
 
     const savedLastResults = localStorage.getItem('lastLotteryResult');
     if (savedLastResults) {
       setLastResults(JSON.parse(savedLastResults));
     }
-
-    return () => clearInterval(timer);
   }, []);
 
   return (
@@ -63,7 +53,6 @@ export const Home = ({ userAddress }) => {
       <div className="ticker-container">
         <div className="ticker-wrap">
           <div className="ticker-move">
-            <div className="ticker-item">Next lottery draw in: {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? `0${timeLeft % 60}` : timeLeft % 60}</div>
             <div className="ticker-item">Last winning numbers: {lastResults.join(', ')}</div>
             <div className="ticker-item">Buy your ticket now and win big!</div>
             <div className="ticker-item">Lottery ticket price: 10 EliEllaCoins</div>

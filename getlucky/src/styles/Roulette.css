@@ -1,35 +1,75 @@
-
-
-.roulette-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.back-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
+  .roulette-container {
+    padding: 20px;
+    text-align: center;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  .roulette-title {
+    font-size: 2.5rem;
     color: #daa520;
+    margin-bottom: 20px;
+  }
+  
+  .bet-container {
+    margin-bottom: 20px;
+  }
+  
+  .bet-container label {
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+  
+  .bet-container input {
+    padding: 5px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
   }
   
   .betting-table {
     display: flex;
     flex-direction: column;
-    margin: 20px;
+    align-items: center;
   }
   
   .row {
     display: flex;
     justify-content: center;
-    margin: 5px 0;
+    margin-bottom: 10px;
   }
   
-  .number {
-    width: 50px;
-    height: 50px;
+  .numbers-table {
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
     border-radius: 50%;
+    margin: 5px;
     cursor: pointer;
-    margin: 2px;
   }
-
+  
   .green {
     background-color: green;
   }
@@ -40,108 +80,62 @@
   
   .black {
     background-color: black;
-  }
-  
-  .categories {
-    display: flex;
-    justify-content: space-evenly;
   }
   
   .betting-category {
+    padding: 10px 20px;
     margin: 5px;
-    padding: 10px;
-    background-color: white;
-    border: 2px solid #daa520;
+    background-color: #daa520;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .spin-button-container {
+    margin-top: 20px;
   }
   
   .spin-button {
-    padding: 10px 20px;
     background-color: #daa520;
-    color: black;
     border: none;
-    border-radius: 5px;
+    color: white;
+    padding: 10px 20px;
     cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+  }
+  
+  .spin-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
+  .result-display {
     margin-top: 20px;
   }
   
-  .roulette-wheel {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    margin-top: 20px;
-    border: 10px solid #daa520;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #333;
+  .message {
+    margin-top: 10px;
+    font-weight: bold;
   }
   
-  .wheel {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    transform-origin: center center;
+  .play-again-button {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
   }
   
-  .wheel-slice {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    clip-path: polygon(50% 50%, 100% 0, 100% 100%);
-    transform-origin: 50% 50%;
+  .play-again-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
   }
-  
-  .wheel-number {
-    position: absolute;
-    left: 50%;
-    top: 10%;
-    transform-origin: center;
-    display: block;
-  }
-  
-  .green {
-    background-color: green;
-  }
-  
-  .red {
-    background-color: red;
-  }
-  
-  .black {
-    background-color: black;
-  }
-  
-  .ball {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform-origin: bottom center;
-  }
-  
-  .result-message {
-    margin-top: 20px;
-    font-size: 18px;
-  }
-  
-  .spinning .wheel {
-    animation: spin 3s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  
-  
   

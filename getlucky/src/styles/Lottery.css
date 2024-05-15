@@ -144,31 +144,36 @@
     margin-top: 10px;
   }
   
-  .time-left {
+  .play-again-button {
     margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
   }
   
-  .time-left h3 {
-    font-size: 1.5rem;
-    color: #daa520;
+  .play-again-button:hover {
+    background-color: #218838;
   }
-  
-  .time-left p {
-    font-size: 1.2rem;
-    margin-top: 10px;
-  }
-  
-  .last-results {
-    margin-top: 40px;
-  }
-  
-  .last-results h2 {
-    font-size: 2rem;
-    color: #daa520;
-  }
-  
-  .last-results p {
-    font-size: 1.5rem;
+
+  .back-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
     font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+    margin-bottom: 20px;
   }
+  
+  .back-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
   

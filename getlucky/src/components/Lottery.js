@@ -1,69 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Lottery.css';
+import { useNavigate } from 'react-router-dom';
 
-export const Lottery = ({ userAddress }) => {
+export const Lottery = ({ userAddress, initialBalance }) => {
   const [players, setPlayers] = useState([]);
   const [winner, setWinner] = useState(null);
   const [message, setMessage] = useState('');
   const [ticket, setTicket] = useState([]);
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [lotteryResult, setLotteryResult] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(0);
   const [lastResults, setLastResults] = useState([]);
   const [hasActiveTicket, setHasActiveTicket] = useState(false);
+  const [betAmount, setBetAmount] = useState(0);
+  const [userBalance, setUserBalance] = useState(initialBalance);
+  const [showResults, setShowResults] = useState(false);
+  const navigate = useNavigate();
 
-  const LOTTERY_INTERVAL = 3600; 
   useEffect(() => {
     const savedTicket = localStorage.getItem('lotteryTicket');
     if (savedTicket) {
       setSelectedNumbers(JSON.parse(savedTicket));
       setHasActiveTicket(true);
     }
-
-    const now = Math.floor(Date.now() / 1000);
-    const nextDrawTime = Math.ceil(now / LOTTERY_INTERVAL) * LOTTERY_INTERVAL;
-    setTimeLeft(nextDrawTime - now);
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          performDraw();
-          return LOTTERY_INTERVAL;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
   }, []);
 
-  const performDraw = () => {
-    const results = Array.from({ length: 6 }, () => Math.floor(Math.random() * 49) + 1);
-    setLastResults(results);
-    setLotteryResult(results);
-    if (hasActiveTicket) {
-      setWinner(checkWinner(results));
+  useEffect(() => {
+    const savedLastResults = localStorage.getItem('lastLotteryResult');
+    if (savedLastResults) {
+      setLastResults(JSON.parse(savedLastResults));
     }
-    setPlayers([]);
-    setSelectedNumbers([]);
+  }, []);
+
+  useEffect(() => {
+    if (showResults && lotteryResult.length > 0) {
+      const isWinner = checkWinner(lotteryResult);
+      setWinner(isWinner);
+      setMessage(isWinner.message);
+      setUserBalance(isWinner.newBalance);
+    }
+  }, [lotteryResult]);
+
+  const performDraw = () => {
+    const randomNumbers = [];
+    while (randomNumbers.length < 6) {
+      const randNum = Math.floor(Math.random() * 49) + 1;
+      if (!randomNumbers.includes(randNum)) {
+        randomNumbers.push(randNum);
+      }
+    }
+    const results = randomNumbers;
+    setLotteryResult(results);
     localStorage.setItem('lastLotteryResult', JSON.stringify(results));
-    localStorage.removeItem('lotteryTicket');
-    setHasActiveTicket(false); 
-    setMessage('A new round has started, you can buy a new ticket now!');
+    return results;
   };
 
   const checkWinner = (results) => {
     const matches = selectedNumbers.filter((num) => results.includes(num));
-    if (matches.length === 6) {
-      return `Congratulations ${userAddress}, you won the jackpot!`;
-    } else if (matches.length === 5) {
-      return `Congratulations ${userAddress}, you won the second prize!`;
-    } else if (matches.length === 4) {
-      return `Congratulations ${userAddress}, you won the third prize!`;
-    } else {
-      return 'No prize this time, try again!';
+    let multiplier = 0;
+    let message = 'No prize this time, try again!';
+
+    switch (matches.length) {
+      case 6:
+        multiplier = 10;
+        message = `Congratulations ${userAddress}, you won the jackpot!`;
+        break;
+      case 5:
+        multiplier = 3;
+        message = `Congratulations ${userAddress}, you won the second prize!`;
+        break;
+      case 4:
+        multiplier = 2;
+        message = `Congratulations ${userAddress}, you won the third prize!`;
+        break;
+      default:
+        multiplier = -1;
     }
+
+    const newBalance = userBalance + betAmount * multiplier;
+    return { message, newBalance };
   };
 
   const buyTicket = () => {
@@ -90,29 +104,58 @@ export const Lottery = ({ userAddress }) => {
       return;
     }
 
+    if (betAmount < 1|| betAmount > userBalance) {
+      setMessage('Invalid bet amount!');
+      return;
+    }
+
+    // Save the ticket and perform the draw
     localStorage.setItem('lotteryTicket', JSON.stringify(selectedNumbers));
     setHasActiveTicket(true);
-    setMessage('Ticket submitted successfully!');
+
+    const results = performDraw();
+    setLotteryResult(results);
+
+    // Show the results
+    setShowResults(true);
   };
 
-  useEffect(() => {
-    const savedLastResults = localStorage.getItem('lastLotteryResult');
-    if (savedLastResults) {
-      setLastResults(JSON.parse(savedLastResults));
-    }
-  }, []);
+  const handleBetChange = (e) => {
+    setBetAmount(Number(e.target.value));
+  };
+
+  const playAgain = () => {
+    setWinner(null);
+    setMessage('');
+    setTicket([]);
+    setSelectedNumbers([]);
+    setLotteryResult([]);
+    setShowResults(false);
+    setHasActiveTicket(false);
+    setBetAmount(0);
+    localStorage.removeItem('lotteryTicket');
+  };
+
+  const goBack = () => {
+    navigate('/home');
+  };
 
   return (
     <div className="lottery-container">
+      <button onClick={goBack} className="back-button">Back</button>
       <h1>Lottery Game</h1>
-      <div className="time-left">
-        <h3>Time Left for Next Draw</h3>
-        <p>{Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? `0${timeLeft % 60}` : timeLeft % 60}</p>
-      </div>
       <p>Buy a ticket and stand a chance to win!</p>
-      {!ticket.length && !hasActiveTicket ? (
-        <button onClick={buyTicket} className="buy-ticket-button">Buy Ticket</button>
-      ) : !hasActiveTicket ? (
+      <p>Your balance: ${userBalance}</p>
+      <div className="bet-container">
+        <label>
+          Bet amount: $
+          <input type="number" value={betAmount} onChange={handleBetChange} disabled={hasActiveTicket || showResults} />
+        </label>
+        {!ticket.length && !hasActiveTicket && !showResults && (
+          <button onClick={buyTicket} className="buy-ticket-button">Buy Ticket</button>
+        )}
+      </div>
+      {!hasActiveTicket && !showResults && ticket.length > 0 && (
         <div className="ticket">
           <h2>Your Ticket</h2>
           <div className="ticket-container">
@@ -122,7 +165,7 @@ export const Lottery = ({ userAddress }) => {
                   key={number}
                   className={`number ${selectedNumbers.includes(number) ? 'selected' : ''}`}
                   onClick={() => selectNumber(number)}
-                  disabled={selectedNumbers.length === 6}
+                  disabled={selectedNumbers.length === 6 && !selectedNumbers.includes(number)}
                 >
                   {number}
                 </button>
@@ -133,23 +176,19 @@ export const Lottery = ({ userAddress }) => {
             </button>
           </div>
         </div>
-      ) : (
-        <div className="selected-numbers">
-          <h3>Your Numbers</h3>
-          <p>{selectedNumbers.join(', ')}</p>
-        </div>
       )}
-      {message && <p className="message">{message}</p>}
-      {winner && (
-        <div className="winner-announcement">
-          <h2>Winner</h2>
-          <p>{winner}</p>
-        </div>
-      )}
-      {lastResults.length > 0 && (
-        <div className="last-results">
-          <h2>Last Draw Results</h2>
-          <p>{lastResults.join(', ')}</p>
+      {showResults && (
+        <div className="results">
+          <div className="selected-numbers">
+            <h3>Your Numbers</h3>
+            <p>{selectedNumbers.join(', ')}</p>
+          </div>
+          <div className="lottery-result">
+            <h3>Lottery Results</h3>
+            <p>{lotteryResult.join(', ')}</p>
+          </div>
+          <p className="message">{message}</p>
+          <button onClick={playAgain} className="play-again-button">Play Again</button>
         </div>
       )}
     </div>
