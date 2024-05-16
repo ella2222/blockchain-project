@@ -9,6 +9,7 @@ export const Dice = ({ userAddress, initialBalance }) => {
   const [betAmount, setBetAmount] = useState(0);
   const [message, setMessage] = useState('');
   const [gamePlayed, setGamePlayed] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
   const navigate = useNavigate();
 
   const rollDice = () => {
@@ -16,30 +17,34 @@ export const Dice = ({ userAddress, initialBalance }) => {
   };
 
   const playGame = () => {
-    if (betAmount < 1 || betAmount > userBalance) {
+    if (betAmount <= 0 || betAmount > userBalance) {
       setMessage('Invalid bet amount!');
       return;
     }
 
-    const userRolls = [rollDice(), rollDice()];
-    const computerRolls = [rollDice(), rollDice()];
+    setIsRolling(true);
+    setTimeout(() => {
+      const userRolls = [rollDice(), rollDice()];
+      const computerRolls = [rollDice(), rollDice()];
 
-    const userTotal = userRolls.reduce((a, b) => a + b, 0);
-    const computerTotal = computerRolls.reduce((a, b) => a + b, 0);
+      const userTotal = userRolls.reduce((a, b) => a + b, 0);
+      const computerTotal = computerRolls.reduce((a, b) => a + b, 0);
 
-    setUserDice(userRolls);
-    setComputerDice(computerRolls);
-    setGamePlayed(true);
+      setUserDice(userRolls);
+      setComputerDice(computerRolls);
+      setGamePlayed(true);
+      setIsRolling(false);
 
-    if (userTotal > computerTotal) {
-      setUserBalance(userBalance + betAmount);
-      setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${betAmount}!`);
-    } else if (userTotal < computerTotal) {
-      setUserBalance(userBalance - betAmount);
-      setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${betAmount}!`);
-    } else {
-      setMessage(`It's a draw! Your total: ${userTotal}, Computer's total: ${computerTotal}.`);
-    }
+      if (userTotal > computerTotal) {
+        setUserBalance(userBalance + betAmount);
+        setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${betAmount}!`);
+      } else if (userTotal < computerTotal) {
+        setUserBalance(userBalance - betAmount);
+        setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${betAmount}!`);
+      } else {
+        setMessage(`It's a draw! Your total: ${userTotal}, Computer's total: ${computerTotal}.`);
+      }
+    }, 1000);
   };
 
   const handleBetChange = (e) => {
@@ -56,7 +61,7 @@ export const Dice = ({ userAddress, initialBalance }) => {
 
   const goBack = () => {
     navigate('/home');
-  };
+  }
 
   return (
     <div className="dice-container">
@@ -67,27 +72,31 @@ export const Dice = ({ userAddress, initialBalance }) => {
       <div className="bet-container">
         <label>
           Bet amount: $
-          <input type="number" value={betAmount} onChange={handleBetChange} disabled={gamePlayed} />
+          <input type="number" value={betAmount} onChange={handleBetChange} disabled={gamePlayed || isRolling} />
         </label>
-        <button onClick={playGame} className="play-button" disabled={gamePlayed || betAmount <= 0}>
+        <button onClick={playGame} className="play-button" disabled={gamePlayed || isRolling || betAmount <= 0}>
           Play
         </button>
       </div>
-      {gamePlayed && (
-        <div className="results">
-          <div className="dice-results">
-            <div className="user-dice">
-              <h3>Your Dice</h3>
-              <p>{userDice[0]} and {userDice[1]}</p>
-            </div>
-            <div className="computer-dice">
-              <h3>Computer's Dice</h3>
-              <p>{computerDice[0]} and {computerDice[1]}</p>
-            </div>
+      <div className="dice-results">
+        <div className={`dice ${isRolling ? 'rolling' : ''}`}>
+          <div className="user-dice">
+            <h3>Your Dice</h3>
+            <div className="dice-face">{userDice[0]}</div>
+            <div className="dice-face">{userDice[1]}</div>
           </div>
-          <p className="message">{message}</p>
-          <button onClick={replayGame} className="replay-button">Replay</button>
+          <div className="computer-dice">
+            <h3>Computer's Dice</h3>
+            <div className="dice-face">{computerDice[0]}</div>
+            <div className="dice-face">{computerDice[1]}</div>
+          </div>
         </div>
+        {gamePlayed && (
+          <p className="message">{message}</p>
+        )}
+      </div>
+      {gamePlayed && (
+        <button onClick={replayGame} className="replay-button">Replay</button>
       )}
     </div>
   );

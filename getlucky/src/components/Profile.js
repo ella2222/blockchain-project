@@ -1,6 +1,16 @@
+/* global BigInt */
+
 import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css';
 import { useNavigate } from 'react-router-dom';
+
+import { useWallet } from '../utils/Context';
+
+import { getBalance, deposit, withdraw } from '../utils/EthersUtils';
+
+const {ethers} = require('ethers');
+
+const provider = new ethers.BrowserProvider(window.ethereum);
 
 async function getCurrentMetaMaskAddress() {
   if (window.ethereum) {
@@ -17,11 +27,13 @@ async function getCurrentMetaMaskAddress() {
   }
 }
 
-export const Profile = ({ initialBalance }) => {
-  const [balance, setBalance] = useState(initialBalance);
-  const [amountToAdd, setAmountToAdd] = useState('');
+export const Profile = () => {
+  const [balance, setBalance] = useState(0);
   const [userAddress, setUserAddress] = useState('');
+  const [amountToAdd, setAmountToAdd] = useState('');
   const navigate = useNavigate();
+
+  const { wallet } = useWallet();
 
   useEffect(() => {
     getCurrentMetaMaskAddress().then(address => {
@@ -29,27 +41,44 @@ export const Profile = ({ initialBalance }) => {
     });
   }, []);
 
-  const handleAddFunds = () => {
-    const amount = parseFloat(amountToAdd);
-    if (!isNaN(amount) && amount > 0) {
-      const newBalance = balance + amount;
-      if (newBalance >= 0) {
-        setBalance(newBalance);
-        setAmountToAdd('');
-      } else {
-        alert("Insufficient funds. Cannot have a negative balance.");
-      }
-    } else {
-      alert("Please enter a valid amount.");
+  useEffect(() => {
+    if (wallet) {
+      getBalance(provider, wallet).then(balance => {
+        setBalance(balance);
+      });
     }
+  }, [wallet]);
+
+  const handleAmountChange = (event) => {
+    setAmountToAdd(event.target.value);
+  };
+
+  const handleAddFunds = () => {
+    const parsedAmount = parseFloat(amountToAdd);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert("Please enter a valid positive number.");
+      return;
+    }
+    const amount = BigInt(Math.floor(parsedAmount * 100)); // Convert to BigInt, assuming smallest unit is cents
+
+    if (!wallet) {
+      alert("Please connect your wallet.");
+      return;
+    }
+
+    deposit(provider, wallet, amount)
+      .then(() => {
+        setBalance(prevBalance => prevBalance + amount);
+        alert("Funds added successfully!");
+      })
+      .catch(error => {
+        console.error("Failed to deposit funds:", error);
+        alert("Failed to add funds. Please try again.");
+      });
   };
 
   const goBack = () => {
     navigate('/home');
-  };
-
-  const handleAmountChange = (e) => {
-    setAmountToAdd(e.target.value);
   };
 
   return (

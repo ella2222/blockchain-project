@@ -17,6 +17,24 @@
     margin-bottom: 20px;
   }
   
+  .back-button {
+    background-color: #daa520;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #b8860b;
+    transform: scale(1.05);
+  }
+  
   .bet-container {
     margin-bottom: 20px;
   }
@@ -51,23 +69,55 @@
     transform: scale(1.05);
   }
   
-  .results {
-    margin-top: 20px;
+  .dice-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
   }
   
-  .dice-results {
+  .dice {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
   }
   
   .user-dice, .computer-dice {
-    font-size: 1.2rem;
+    text-align: center;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .dice-face {
+    width: 60px;
+    height: 60px;
+    margin: 10px;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 10px;
+    border: 2px solid #daa520;
+    transition: transform 0.2s;
+  }
+  
+  .rolling .dice-face {
+    animation: rolling 1s infinite;
+  }
+  
+  @keyframes rolling {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(90deg); }
+    50% { transform: rotate(180deg); }
+    75% { transform: rotate(270deg); }
+    100% { transform: rotate(360deg); }
   }
   
   .message {
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-top: 20px;
   }
   
   .replay-button {
@@ -87,20 +137,3 @@
     transform: scale(1.05);
   }
   
-  .back-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-    margin-bottom: 20px;
-  }
-  
-  .back-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
