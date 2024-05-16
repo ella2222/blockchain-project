@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Lottery.css';
 import { useNavigate } from 'react-router-dom';
+import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
 
 export const Lottery = ({ userAddress, initialBalance }) => {
   const [players, setPlayers] = useState([]);
@@ -12,8 +13,8 @@ export const Lottery = ({ userAddress, initialBalance }) => {
   const [lastResults, setLastResults] = useState([]);
   const [hasActiveTicket, setHasActiveTicket] = useState(false);
   const [betAmount, setBetAmount] = useState(0);
-  const [userBalance, setUserBalance] = useState(initialBalance);
   const [showResults, setShowResults] = useState(false);
+  const { balance, setBalance } = useBalance();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export const Lottery = ({ userAddress, initialBalance }) => {
       const isWinner = checkWinner(lotteryResult);
       setWinner(isWinner);
       setMessage(isWinner.message);
-      setUserBalance(isWinner.newBalance);
+      setBalance(isWinner.newBalance);
     }
   }, [lotteryResult]);
 
@@ -81,7 +82,7 @@ export const Lottery = ({ userAddress, initialBalance }) => {
         multiplier = -1;
     }
 
-    const newBalance = userBalance + betAmount * multiplier;
+    const newBalance = balance + betAmount * multiplier;
     return { message, newBalance };
   };
 
@@ -109,7 +110,7 @@ export const Lottery = ({ userAddress, initialBalance }) => {
       return;
     }
 
-    if (betAmount < 1|| betAmount > userBalance) {
+    if (betAmount < 1|| betAmount > balance) {
       setMessage('Invalid bet amount!');
       return;
     }
@@ -150,7 +151,7 @@ export const Lottery = ({ userAddress, initialBalance }) => {
       <button onClick={goBack} className="back-button">Back</button>
       <h1>Lottery Game</h1>
       <p>Buy a ticket and stand a chance to win!</p>
-      <p>Your balance: ${userBalance}</p>
+      <p>Your balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
       <div className="bet-container">
         <label>
           Bet amount: $

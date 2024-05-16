@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 import { useWallet } from '../utils/Context';
+import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
 
 export const Home = ({ userAddress }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isLogged, setIsLogged] = useState(true);
+  const { balance, setBalance } = useBalance();
   const navigate = useNavigate();
 
   const toggleProfileMenu = () => {
@@ -58,6 +60,7 @@ export const Home = ({ userAddress }) => {
             <div className="ticker-item">Lottery ticket price: 10 EliEllaCoins</div>
             <div className="ticker-item">Roulette ticket price: 5 EliEllaCoins</div>
             <div className="ticker-item">Dice ticket price: 2 EliEllaCoins</div>
+            <div className="ticker-item">Your current balance: {(Number(balance) / 100).toFixed(2)} EEC</div>
           </div>
         </div>
       </div>

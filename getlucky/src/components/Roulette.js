@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/Roulette.css";
 import { useNavigate } from 'react-router-dom';
+import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
 
 const numbers = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -14,13 +15,13 @@ const colors = [
   "red", "black", "red", "black", "red", "black", "red", "black", "red", "black"
 ];
 
-export const Roulette = ({ initialBalance }) => {
+export const Roulette = ({}) => {
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [winningNumber, setWinningNumber] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
   const [betAmount, setBetAmount] = useState(0);
-  const [userBalance, setUserBalance] = useState(initialBalance);
+  const { balance, setBalance } = useBalance();
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ export const Roulette = ({ initialBalance }) => {
       alert("Please select a number or category before spinning.");
       return;
     }
-    if (betAmount < 1 || betAmount > userBalance) {
+    if (betAmount < 1 || betAmount > balance) {
       setMessage('Invalid bet amount! Bet must be at least $1 and not more than your current balance.');
       return;
     }
@@ -75,10 +76,10 @@ export const Roulette = ({ initialBalance }) => {
 
         if (multiplier > 0) {
           const winnings = betAmount * multiplier;
-          setUserBalance(userBalance + winnings);
+          setBalance(balance + winnings);
           setMessage(`Congratulations! You won ${winnings}!`);
         } else {
-          setUserBalance(userBalance - betAmount);
+          setBalance(balance - betAmount);
           setMessage('Sorry, try again!');
         }
       }, 1000);
@@ -106,7 +107,7 @@ export const Roulette = ({ initialBalance }) => {
       <button onClick={goBack} className="back-button">Back</button>
       <h1 className="roulette-title">Roulette Game</h1>
       <p>Select a number on the table and spin the wheel!</p>
-      <p>Your balance: ${userBalance}</p>
+      <p>Your balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
       <div className="bet-container">
         <label>
           Bet amount: $

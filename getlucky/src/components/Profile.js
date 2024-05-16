@@ -3,12 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css';
 import { useNavigate } from 'react-router-dom';
-
 import { useWallet } from '../utils/Context';
+import { getBalance, deposit } from '../utils/EthersUtils';
+import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
 
-import { getBalance, deposit, withdraw } from '../utils/EthersUtils';
-
-const {ethers} = require('ethers');
+const { ethers } = require('ethers');
 
 const provider = new ethers.BrowserProvider(window.ethereum);
 
@@ -27,13 +26,22 @@ async function getCurrentMetaMaskAddress() {
   }
 }
 
+const calculateFee = (amount) => {
+  if (amount < 1000) {
+    return amount * 0.01; // 1% fee for amounts less than 1000 EEC
+  } else if (amount < 5000) {
+    return amount * 0.02; // 2% fee for amounts between 1000 and 5000 EEC
+  } else {
+    return amount * 0.05; // 5% fee for amounts greater than 5000 EEC
+  }
+};
+
 export const Profile = () => {
-  const [balance, setBalance] = useState(0);
   const [userAddress, setUserAddress] = useState('');
   const [amountToAdd, setAmountToAdd] = useState('');
   const navigate = useNavigate();
-
   const { wallet } = useWallet();
+  const { balance, setBalance } = useBalance();
 
   useEffect(() => {
     getCurrentMetaMaskAddress().then(address => {
@@ -41,40 +49,35 @@ export const Profile = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (wallet) {
-      getBalance(provider, wallet).then(balance => {
-        setBalance(balance);
-      });
-    }
-  }, [wallet]);
-
   const handleAmountChange = (event) => {
     setAmountToAdd(event.target.value);
   };
 
-  const handleAddFunds = () => {
+  const handleAddFunds = async () => {
     const parsedAmount = parseFloat(amountToAdd);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       alert("Please enter a valid positive number.");
       return;
     }
-    const amount = BigInt(Math.floor(parsedAmount * 100)); // Convert to BigInt, assuming smallest unit is cents
+
+    const fee = calculateFee(parsedAmount);
+    const totalAmount = parsedAmount + fee;
 
     if (!wallet) {
       alert("Please connect your wallet.");
       return;
     }
 
-    deposit(provider, wallet, amount)
-      .then(() => {
-        setBalance(prevBalance => prevBalance + amount);
-        alert("Funds added successfully!");
-      })
-      .catch(error => {
-        console.error("Failed to deposit funds:", error);
-        alert("Failed to add funds. Please try again.");
-      });
+    try {
+      const signer = await provider.getSigner();
+      await deposit(signer, totalAmount);
+      const updatedBalance = await getBalance(signer, userAddress);
+      setBalance(updatedBalance);
+      alert(`Funds added successfully! A fee of ${fee.toFixed(2)} EEC was applied.`);
+    } catch (error) {
+      console.error("Failed to deposit funds:", error);
+      alert("Failed to add funds. Please try again.");
+    }
   };
 
   const goBack = () => {
@@ -85,8 +88,14 @@ export const Profile = () => {
     <div className="profile-container">
       <button onClick={goBack} className="back-button">Back</button>
       <h1>Profile</h1>
-      <p>Address: {userAddress}</p>
-      <p>Balance: ${balance}</p>
+      <div className="profile-info">
+        <p>Address: {userAddress}</p>
+        <p>Balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
+      </div>
+      <div className="min-max-deposit">
+        <p style={{color:"black"}}>Minimum deposit: 10 EEC</p>
+        <p style={{color:"black"}}>Maximum deposit: 10000 EEC</p>
+      </div>
       <div className="add-funds-container">
         <input
           type="number"
@@ -95,6 +104,10 @@ export const Profile = () => {
           placeholder="Enter amount to add"
         />
         <button onClick={handleAddFunds} className="add-funds-button">Add Funds</button>
+        <div className="fee-info">
+          <p>Note: A fee will be applied when depositing funds.</p>
+          <p>1% for amounts less than 1000 EEC, 2% for amounts between 1000 and 5000 EEC, 5% for amounts greater than 5000 EEC.</p>
+        </div>
       </div>
     </div>
   );

@@ -1,67 +1,100 @@
+/* Profile.css */
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: radial-gradient(circle, #1e1e1e, #121212);
+}
+
 .profile-container {
-    padding: 20px;
-    text-align: center;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    min-height: 100vh;
-  }
-  
-  .profile-container h1 {
-    font-size: 2.5rem;
-    color: #daa520;
-    margin-bottom: 20px;
-  }
-  
-  .profile-container p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-  }
-  
-  .back-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-    margin-bottom: 20px;
-  }
-  
-  .back-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .add-funds-container {
-    margin-top: 20px;
-  }
-  
-  .add-funds-container input {
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-right: 10px;
-    color: #333;
-  }
-  
-  .add-funds-button {
-    background-color: #28a745;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-  }
-  
-  .add-funds-button:hover {
-    background-color: #218838;
-    transform: scale(1.05);
-  }
-  
+  padding: 20px;
+  text-align: center;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.profile-container h1 {
+  font-size: 3rem;
+  color: #ffdd57;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.profile-container p {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background-color: #ffdd57;
+  border: none;
+  color: #1e1e1e;
+  padding: 10px 25px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s;
+  margin-bottom: 30px;
+}
+
+.back-button:hover {
+  background-color: #e6c200;
+  transform: scale(1.05);
+}
+
+.add-funds-container {
+  margin-top: 30px;
+}
+
+.add-funds-container input {
+  padding: 12px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  border: 2px solid #ffdd57;
+  margin-right: 15px;
+  color: #333;
+}
+
+.add-funds-button {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s;
+}
+
+.add-funds-button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.fee-info {
+  margin-top: 20px;
+  color: #ffdd57;
+  font-size: 1rem;
+  font-style: italic;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.profile-info {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.min-max-deposit {
+  display: flex;
+  justify-content: space-between;
+  background-color: #ffdd57;
+  padding: 10px;
+  border-radius: 5px;
+}
+

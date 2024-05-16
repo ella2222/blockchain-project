@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import '../styles/Dice.css';
 import { useNavigate } from 'react-router-dom';
+import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
 
 export const Dice = ({ userAddress, initialBalance }) => {
   const [userDice, setUserDice] = useState([0, 0]);
   const [computerDice, setComputerDice] = useState([0, 0]);
-  const [userBalance, setUserBalance] = useState(initialBalance);
+  const { balance, setBalance } = useBalance();
   const [betAmount, setBetAmount] = useState(0);
   const [message, setMessage] = useState('');
   const [gamePlayed, setGamePlayed] = useState(false);
@@ -17,7 +18,7 @@ export const Dice = ({ userAddress, initialBalance }) => {
   };
 
   const playGame = () => {
-    if (betAmount <= 0 || betAmount > userBalance) {
+    if (betAmount <= 0 || betAmount > balance) {
       setMessage('Invalid bet amount!');
       return;
     }
@@ -36,10 +37,10 @@ export const Dice = ({ userAddress, initialBalance }) => {
       setIsRolling(false);
 
       if (userTotal > computerTotal) {
-        setUserBalance(userBalance + betAmount);
+        setBalance(balance + betAmount);
         setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${betAmount}!`);
       } else if (userTotal < computerTotal) {
-        setUserBalance(userBalance - betAmount);
+        setBalance(balance - betAmount);
         setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${betAmount}!`);
       } else {
         setMessage(`It's a draw! Your total: ${userTotal}, Computer's total: ${computerTotal}.`);
@@ -68,7 +69,7 @@ export const Dice = ({ userAddress, initialBalance }) => {
       <button onClick={goBack} className="back-button">Back</button>
       <h1>Dice Game</h1>
       <p>Roll the dice and try to win!</p>
-      <p>Your balance: ${userBalance}</p>
+      <p>Your balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
       <div className="bet-container">
         <label>
           Bet amount: $
