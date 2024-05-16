@@ -18,9 +18,14 @@ export const Lottery = ({ userAddress, initialBalance }) => {
 
   useEffect(() => {
     const savedTicket = localStorage.getItem('lotteryTicket');
+    const savedResults = localStorage.getItem('lastLotteryResult');
     if (savedTicket) {
       setSelectedNumbers(JSON.parse(savedTicket));
       setHasActiveTicket(true);
+    }
+    if (savedResults) {
+      setLotteryResult(JSON.parse(savedResults));
+      setShowResults(true);
     }
   }, []);
 
@@ -151,11 +156,11 @@ export const Lottery = ({ userAddress, initialBalance }) => {
           Bet amount: $
           <input type="number" value={betAmount} onChange={handleBetChange} disabled={hasActiveTicket || showResults} />
         </label>
-        {!ticket.length && !hasActiveTicket && !showResults && (
+        {!hasActiveTicket && !showResults && (
           <button onClick={buyTicket} className="buy-ticket-button">Buy Ticket</button>
         )}
       </div>
-      {!hasActiveTicket && !showResults && ticket.length > 0 && (
+      {!hasActiveTicket && ticket.length > 0 && (
         <div className="ticket">
           <h2>Your Ticket</h2>
           <div className="ticket-container">
