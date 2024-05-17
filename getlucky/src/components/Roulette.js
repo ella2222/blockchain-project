@@ -1,7 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Roulette.css";
 import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
+import { placeBet, claimPrize, getBalance } from '../utils/EthersUtils'; // Adjust the path as necessary
+
+const { ethers } = require('ethers');
+
+const provider = new ethers.BrowserProvider(window.ethereum);
+
+async function getCurrentMetaMaskAddress() {
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      return accounts[0]; // The first account is usually the user's primary MetaMask account.
+    } catch (error) {
+      console.error("Error fetching MetaMask account:", error);
+      return null;
+    }
+  } else {
+    alert("Please install MetaMask to use this feature.");
+    return null;
+  }
+}
 
 const numbers = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -16,6 +36,7 @@ const colors = [
 ];
 
 export const Roulette = ({}) => {
+  const [userAddress, setUserAddress] = useState('');
   const [selectedNumbers, setSelectedNumbers] = useState([]);
   const [winningNumber, setWinningNumber] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -24,6 +45,12 @@ export const Roulette = ({}) => {
   const { balance, setBalance } = useBalance();
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getCurrentMetaMaskAddress().then(address => {
+      setUserAddress(address);
+    });
+  }, []);
 
   const handleNumberClick = (number) => {
     if (!isSpinning && !hasPlayed) {
@@ -37,52 +64,67 @@ export const Roulette = ({}) => {
     }
   };
 
-  const spinWheel = () => {
+  const spinWheel = async () => {
     if (selectedNumbers.length === 0) {
       alert("Please select a number or category before spinning.");
       return;
     }
     if (betAmount < 1 || betAmount > balance) {
-      setMessage('Invalid bet amount! Bet must be at least $1 and not more than your current balance.');
+      setMessage('Invalid bet amount! Bet must be at least 1 EEC and not more than your current balance.');
       return;
     }
     if (!isSpinning) {
-      setIsSpinning(true);
-      const randomIndex = Math.floor(Math.random() * numbers.length);
-      const chosenNumber = numbers[randomIndex];
-      setTimeout(() => {
-        setWinningNumber(chosenNumber);
-        setIsSpinning(false);
-        setHasPlayed(true);
+      try {
+        const signer = await provider.getSigner();
+        await placeBet(signer, 'RouletteGame', betAmount);
 
-        let multiplier = 0;
-        if (selectedNumbers.includes(chosenNumber)) {
-          if (selectedNumbers.length === 1) {
-            if (chosenNumber === 0) {
-              multiplier = 50; // Special case for 0
-            } else {
-              multiplier = 10; // Single number
+        setIsSpinning(true);
+        const randomIndex = Math.floor(Math.random() * numbers.length);
+        const chosenNumber = numbers[randomIndex];
+        setTimeout(async () => {
+          setWinningNumber(chosenNumber);
+          setIsSpinning(false);
+          setHasPlayed(true);
+
+          let multiplier = 0;
+          if (selectedNumbers.includes(chosenNumber)) {
+            if (selectedNumbers.length === 1) {
+              if (chosenNumber === 0) {
+                multiplier = 50; // Special case for 0
+              } else {
+                multiplier = 10; // Single number
+              }
+            } else if (selectedNumbers.length === 12) {
+              multiplier = 3; // Full line or 1-12, 13-24, 25-36
             }
-          } else if (selectedNumbers.length === 12) {
-            multiplier = 3; // Full line or 1-12, 13-24, 25-36
+            else if (selectedNumbers.length === 18) {
+              multiplier = 2; // Even, Odd, Red, Black, 1-18, 19-36
+            }
+            else if (selectedNumbers.length <= 12) {
+              multiplier = 3; // 1-12, 13-24, 25-36
+            }
           }
-          else if (selectedNumbers.length === 18) {
-            multiplier = 2; // Even, Odd, Red, Black, 1-18, 19-36
-          }
-          else if (selectedNumbers.length <= 12) {
-            multiplier = 3; // 1-12, 13-24, 25-36
-          }
-        }
 
-        if (multiplier > 0) {
-          const winnings = betAmount * multiplier;
-          setBalance(balance + winnings);
-          setMessage(`Congratulations! You won ${winnings}!`);
-        } else {
-          setBalance(balance - betAmount);
-          setMessage('Sorry, try again!');
-        }
-      }, 1000);
+          if (multiplier > 0) {
+            const winnings = betAmount * multiplier;
+            try {
+              await claimPrize(signer, winnings);
+              const updatedBalance = await getBalance(signer, userAddress);
+              setBalance(updatedBalance);
+              setMessage(`Congratulations! You won ${winnings} EEC!`);
+            } catch (error) {
+              console.error('Error claiming prize:', error);
+              setMessage('Failed to claim prize.');
+            }
+          } else {
+            setBalance(balance - betAmount);
+            setMessage('Sorry, try again!');
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('Failed to place bet:', error);
+        setMessage('Failed to place bet: ' + error.message);
+      }
     }
   };
 
@@ -95,7 +137,9 @@ export const Roulette = ({}) => {
   };
 
   const handleBetChange = (e) => {
-    setBetAmount(Number(e.target.value));
+    let value = e.target.value;
+    value = value.replace(/^0+(?!$)/, '');
+    setBetAmount(value);
   };
 
   const goBack = () => {

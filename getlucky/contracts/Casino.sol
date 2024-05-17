@@ -2,16 +2,17 @@
 pragma solidity ^0.8.20;
 
 import "./EliEllaCoin.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Casino is Ownable {
+contract Casino is Initializable, OwnableUpgradeable {
     EliEllaCoin public token;
 
     struct UserBalance {
         uint256 balance;
         uint256 depositTimestamp;
     }
-    
+
     mapping(address => UserBalance) public balances;
 
     uint256 public minDepositAmount;
@@ -25,29 +26,37 @@ contract Casino is Ownable {
     event MaxDepositAmountUpdated(uint256 newMaxDepositAmount);
     event MinWithdrawAmountUpdated(uint256 newMinWithdrawAmount);
     event MaxWithdrawAmountUpdated(uint256 newMaxWithdrawAmount);
-    
-    constructor(address tokenAddress, address initialOwner) Ownable(initialOwner) {
+    event BetPlaced(address indexed user, string game, uint256 amount, uint256 timestamp);
+    event ResultDrawn(string game, uint256[] winningNumbers, uint256 timestamp);
+    event PrizeClaimed(address indexed user, uint256 prizeAmount, uint256 timestamp);
+
+    function initialize(address tokenAddress, address initialOwner) public initializer {
+        __Ownable_init(initialOwner);
         token = EliEllaCoin(tokenAddress);
         minDepositAmount = 10 * 10 ** 18; // 10 EEC
         maxDepositAmount = 10000 * 10 ** 18; // 10000 EEC
         minWithdrawAmount = 10 * 10 ** 18; // 10 EEC
         maxWithdrawAmount = 10000 * 10 ** 18; // 10000 EEC
     }
-    
+
     function deposit(uint256 amount) public {
         require(amount >= minDepositAmount, "Deposit amount is too low");
         require(amount <= maxDepositAmount, "Deposit amount exceeds maximum limit");
 
         uint256 fee = calculateFee(amount);
         uint256 netAmount = amount - fee;
-        require(token.transferFrom(msg.sender, address(this), amount), "Transfer failed");
         
+        // Transfer fee to the casino balance
+        require(token.transferFrom(msg.sender, address(this), fee), "Transfer of fee failed");
+        // Transfer net amount to the casino balance
+        require(token.transferFrom(msg.sender, address(this), netAmount), "Transfer of net amount failed");
+
         balances[msg.sender].balance += netAmount;
         balances[msg.sender].depositTimestamp = block.timestamp;
-        
+
         emit Deposited(msg.sender, netAmount, fee, block.timestamp);
     }
-    
+
     function withdraw(uint256 amount) public {
         require(amount >= minWithdrawAmount, "Withdraw amount is too low");
         require(amount <= maxWithdrawAmount, "Withdraw amount exceeds maximum limit");
@@ -55,9 +64,14 @@ contract Casino is Ownable {
 
         uint256 fee = calculateFee(amount);
         uint256 netAmount = amount - fee;
-        balances[msg.sender].balance -= amount;
-        require(token.transfer(msg.sender, netAmount), "Transfer failed");
         
+        balances[msg.sender].balance -= amount;
+
+        // Transfer net amount to the user's MetaMask account
+        require(token.transfer(msg.sender, netAmount), "Transfer of net amount failed");
+        // Transfer fee to the casino balance
+        require(token.transfer(address(this), fee), "Transfer of fee failed");
+
         emit Withdrawn(msg.sender, netAmount, fee, block.timestamp);
     }
 
@@ -97,5 +111,29 @@ contract Casino is Ownable {
 
     function getUserDepositTimestamp(address user) external view returns (uint256) {
         return balances[user].depositTimestamp;
+    }
+
+    function placeBet(string memory game, uint256 amount) public {
+        require(balances[msg.sender].balance >= amount, "Insufficient balance");
+
+        balances[msg.sender].balance -= amount;
+
+        // Transfer the bet amount to the casino balance
+        require(token.transfer(address(this), amount), "Transfer of bet amount failed");
+
+        emit BetPlaced(msg.sender, game, amount, block.timestamp);
+    }
+
+    function drawResult(string memory game, uint256[] memory winningNumbers) public onlyOwner {
+        emit ResultDrawn(game, winningNumbers, block.timestamp);
+    }
+
+    function claimPrize(uint256 prizeAmount) public {
+        require(token.balanceOf(address(this)) >= prizeAmount, "Casino does not have enough funds to pay the prize");
+
+        // Transfer the prize amount from the casino balance to the user's balance
+        balances[msg.sender].balance += prizeAmount;
+
+        emit PrizeClaimed(msg.sender, prizeAmount, block.timestamp);
     }
 }

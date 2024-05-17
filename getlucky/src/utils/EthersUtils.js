@@ -25,7 +25,7 @@ export const connectWallet = async (accountChangedHandler) => {
 };
 
 const eliEllaCoinContractAddress = "0xA0F12bdB6EE4e9022274046b63caCACB99966F34"
-const casinoContractAddress = "0x3F83d66B08a679FbA6348C9CA8D0095794023202"
+const casinoContractAddress = "0x3e7eFf801C0234Df5Af94ff1FDa51b2D08bacc0b"
 
 const getEliEllaCoinContract = (provider) => {
     return new ethers.Contract(eliEllaCoinContractAddress, eliEllaCoinABI, provider);

@@ -74,12 +74,9 @@ export const Lottery = ({}) => {
 
   useEffect(() => {
     if (showResults && lotteryResult.length > 0) {
-      const isWinner = checkWinner(lotteryResult, userAddress);
-      setWinner(isWinner);
-      setMessage(isWinner.message);
-      setBalance(isWinner.newBalance);
+      checkWinner(lotteryResult, userAddress);
     }
-  }, [lotteryResult, userAddress]);
+  }, [lotteryResult, showResults]);
 
   const buyTicket = async () => {
     if (hasActiveTicket) {
@@ -97,15 +94,16 @@ export const Lottery = ({}) => {
       await placeBet(signer, 'LotteryGame', betAmount); // Pass the signer instead of userAddress
       const newBalance = balance - betAmount;
       setBalance(newBalance);
-      setTicket(Array.from({ length: 49 }, (_, i) => i + 1));
+      setTicket(Array.from({ length: 49 }, (_, i) => i + 1)); // Set the ticket only if placeBet succeeds
       setMessage('Ticket bought successfully!');
     } catch (error) {
       setMessage('Failed to place bet: ' + error.message);
+      setTicket([]); // Ensure ticket is empty if the bet fails
     }
   };
 
   const performDraw = () => {
-    const randomNumbers = [1,2,3,4,5,6];
+    const randomNumbers = [];
     while (randomNumbers.length < 6) {
       const randNum = Math.floor(Math.random() * 49) + 1;
       if (!randomNumbers.includes(randNum)) {
@@ -118,47 +116,50 @@ export const Lottery = ({}) => {
     return results;
   };
 
-  const checkWinner = async (lotteryResult, userAddress) => {
-    const matches = selectedNumbers.filter((num) => lotteryResult.includes(num));
+  const checkWinner = async (results, userAddress) => {
+    const matches = selectedNumbers.filter((num) => results.includes(num));
     let multiplier = 0;
-    let message = 'No prize this time, try again!';
+    let message = 'Try your luck!';
+    if (matches.length > 0) {
+      message = `No prize this time, try again!`;
+    }
 
     switch (matches.length) {
       case 6:
         multiplier = 10;
-        message = `Congratulations ${userAddress}, you won the jackpot!`;
+        message = `Congratulations ${userAddress}, you won the jackpot! 10 x ${betAmount} = ${10 * betAmount}`;
         break;
       case 5:
         multiplier = 3;
-        message = `Congratulations ${userAddress}, you won the second prize!`;
+        message = `Congratulations ${userAddress}, you won the second prize! 3 x ${betAmount} = ${3 * betAmount}`;
         break;
       case 4:
         multiplier = 2;
-        message = `Congratulations ${userAddress}, you won the third prize!`;
+        message = `Congratulations ${userAddress}, you won the third prize! 2 x ${betAmount} = ${2 * betAmount}`;
         break;
       case 3:
         multiplier = 1;
-        message = `Congratulations ${userAddress}, you won the bid back!`;
+        message = `Congratulations ${userAddress}, you won the bid back! 1 x ${betAmount} = ${betAmount}`;
         break;
       default:
         multiplier = 0;
     }
 
     const newBalance = balance + betAmount * multiplier;
-    const isWinner = multiplier > 0;
-
-    if (isWinner) {
+    setMessage(message);
+    if (multiplier > 0) {
       try {
         const signer = await provider.getSigner();
         await claimPrize(signer, betAmount * multiplier);
-        const newBalance = await getBalance(signer, userAddress);
-        return { message: 'Congratulations! Prize claimed successfully.', newBalance };
+        const updatedBalance = await getBalance(signer, userAddress);
+        setBalance(updatedBalance);
+        setMessage('Congratulations! Prize claimed successfully.');
       } catch (error) {
         console.error('Error claiming prize:', error);
-        return { message: 'Failed to claim prize.', newBalance: balance };
+        setMessage('Failed to claim prize.');
       }
     } else {
-      return { message, newBalance };
+      setBalance(newBalance);
     }
   };
 
@@ -187,12 +188,9 @@ export const Lottery = ({}) => {
   };
 
   const handleBetChange = (e) => {
-    const value = e.target.value;
-
-    // Remove leading zeros
-    const cleanedValue = value.replace(/^0+(?!$)/, '');
-
-    setBetAmount(Number(cleanedValue));
+    let value = e.target.value;
+    value = value.replace(/^0+(?!$)/, '');
+    setBetAmount(value);
   };
 
   const playAgain = () => {
@@ -209,7 +207,7 @@ export const Lottery = ({}) => {
 
   const resetGame = () => {
     localStorage.removeItem('lotteryTicket');
-    localStorage.removeItem('lastLotteryResult');
+    // localStorage.removeItem('lastLotteryResult');
     setWinner(null);
     setMessage('');
     setTicket([]);
@@ -222,6 +220,7 @@ export const Lottery = ({}) => {
   };
 
   const goBack = () => {
+    resetGame();
     navigate('/home');
   };
 

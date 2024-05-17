@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Dice.css';
 import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
+import { placeBet, claimPrize, getBalance } from '../utils/EthersUtils'; // Adjust the path as necessary
 
-export const Dice = ({ userAddress, initialBalance }) => {
+const { ethers } = require('ethers');
+
+const provider = new ethers.BrowserProvider(window.ethereum);
+
+async function getCurrentMetaMaskAddress() {
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      return accounts[0]; // The first account is usually the user's primary MetaMask account.
+    } catch (error) {
+      console.error("Error fetching MetaMask account:", error);
+      return null;
+    }
+  } else {
+    alert("Please install MetaMask to use this feature.");
+    return null;
+  }
+}
+
+export const Dice = () => {
+  const [userAddress, setUserAddress] = useState('');
   const [userDice, setUserDice] = useState([0, 0]);
   const [computerDice, setComputerDice] = useState([0, 0]);
   const { balance, setBalance } = useBalance();
@@ -13,43 +34,62 @@ export const Dice = ({ userAddress, initialBalance }) => {
   const [isRolling, setIsRolling] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    getCurrentMetaMaskAddress().then(address => {
+      setUserAddress(address);
+    });
+  }, []);
+
   const rollDice = () => {
     return Math.floor(Math.random() * 6) + 1;
   };
 
-  const playGame = () => {
+  const playGame = async () => {
     if (betAmount <= 0 || betAmount > balance) {
       setMessage('Invalid bet amount!');
       return;
     }
 
-    setIsRolling(true);
-    setTimeout(() => {
-      const userRolls = [rollDice(), rollDice()];
-      const computerRolls = [rollDice(), rollDice()];
+    try {
+      const signer = await provider.getSigner();
+      await placeBet(signer, 'DiceGame', betAmount);
 
-      const userTotal = userRolls.reduce((a, b) => a + b, 0);
-      const computerTotal = computerRolls.reduce((a, b) => a + b, 0);
+      setIsRolling(true);
+      setTimeout(() => {
+        const userRolls = [rollDice(), rollDice()];
+        const computerRolls = [rollDice(), rollDice()];
 
-      setUserDice(userRolls);
-      setComputerDice(computerRolls);
-      setGamePlayed(true);
-      setIsRolling(false);
+        const userTotal = userRolls.reduce((a, b) => a + b, 0);
+        const computerTotal = computerRolls.reduce((a, b) => a + b, 0);
 
-      if (userTotal > computerTotal) {
-        setBalance(balance + betAmount);
-        setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${betAmount}!`);
-      } else if (userTotal < computerTotal) {
-        setBalance(balance - betAmount);
-        setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${betAmount}!`);
-      } else {
-        setMessage(`It's a draw! Your total: ${userTotal}, Computer's total: ${computerTotal}.`);
-      }
-    }, 1000);
+        setUserDice(userRolls);
+        setComputerDice(computerRolls);
+        setGamePlayed(true);
+        setIsRolling(false);
+
+        if ((userTotal > computerTotal) || (userTotal === 2 && computerTotal !== 2)) {
+          const prizeAmount = betAmount * 2;
+          claimPrize(signer, prizeAmount);
+          getBalance(signer, userAddress).then(newBalance => {
+            setBalance(newBalance);
+            setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${prizeAmount} EEC!`);
+          });
+        } else if ((userTotal < computerTotal) || (userTotal !== 2 && computerTotal === 2)) {
+          setBalance(balance - betAmount);
+          setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${betAmount} EEC!`);
+        } else {
+          setMessage(`It's a draw! Your total: ${userTotal}, Computer's total: ${computerTotal}.`);
+        }
+      }, 1000);
+    } catch (error) {
+      setMessage('Failed to place bet: ' + error.message);
+    }
   };
 
   const handleBetChange = (e) => {
-    setBetAmount(Number(e.target.value));
+    let value = e.target.value;
+    value = value.replace(/^0+(?!$)/, '');
+    setBetAmount(value);
   };
 
   const replayGame = () => {
@@ -62,7 +102,7 @@ export const Dice = ({ userAddress, initialBalance }) => {
 
   const goBack = () => {
     navigate('/home');
-  }
+  };
 
   return (
     <div className="dice-container">
@@ -72,7 +112,7 @@ export const Dice = ({ userAddress, initialBalance }) => {
       <p>Your balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
       <div className="bet-container">
         <label>
-          Bet amount: $
+          Bet amount: EEC
           <input type="number" value={betAmount} onChange={handleBetChange} disabled={gamePlayed || isRolling} />
         </label>
         <button onClick={playGame} className="play-button" disabled={gamePlayed || isRolling || betAmount <= 0}>
