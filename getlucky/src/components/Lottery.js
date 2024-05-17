@@ -2,8 +2,29 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Lottery.css';
 import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
+import { placeBet, drawResult, claimPrize, getBalance } from '../utils/EthersUtils'; // Adjust the path as necessary
 
-export const Lottery = ({ userAddress, initialBalance }) => {
+const { ethers } = require('ethers');
+
+const provider = new ethers.BrowserProvider(window.ethereum);
+
+async function getCurrentMetaMaskAddress() {
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      return accounts[0]; // The first account is usually the user's primary MetaMask account.
+    } catch (error) {
+      console.error("Error fetching MetaMask account:", error);
+      return null;
+    }
+  } else {
+    alert("Please install MetaMask to use this feature.");
+    return null;
+  }
+}
+
+export const Lottery = ({}) => {
+  const [userAddress, setUserAddress] = useState('');
   const [players, setPlayers] = useState([]);
   const [winner, setWinner] = useState(null);
   const [message, setMessage] = useState('');
@@ -12,42 +33,79 @@ export const Lottery = ({ userAddress, initialBalance }) => {
   const [lotteryResult, setLotteryResult] = useState([]);
   const [lastResults, setLastResults] = useState([]);
   const [hasActiveTicket, setHasActiveTicket] = useState(false);
-  const [betAmount, setBetAmount] = useState(0);
+  const [betAmount, setBetAmount] = useState('');
   const [showResults, setShowResults] = useState(false);
   const { balance, setBalance } = useBalance();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedTicket = localStorage.getItem('lotteryTicket');
-    const savedResults = localStorage.getItem('lastLotteryResult');
-    if (savedTicket) {
-      setSelectedNumbers(JSON.parse(savedTicket));
-      setHasActiveTicket(true);
-    }
-    if (savedResults) {
-      setLotteryResult(JSON.parse(savedResults));
-      setShowResults(true);
+    getCurrentMetaMaskAddress().then(address => {
+      setUserAddress(address);
+    });
+  }, []);
+
+  useEffect(() => {
+    try {
+      const savedTicket = localStorage.getItem('lotteryTicket');
+      const savedResults = localStorage.getItem('lastLotteryResult');
+      if (savedTicket) {
+        setSelectedNumbers(JSON.parse(savedTicket));
+        setHasActiveTicket(true);
+      }
+      if (savedResults) {
+        setLotteryResult(JSON.parse(savedResults));
+        setShowResults(true);
+      }
+    } catch (error) {
+      console.error('Failed to parse saved data:', error);
     }
   }, []);
 
   useEffect(() => {
     const savedLastResults = localStorage.getItem('lastLotteryResult');
-    if (savedLastResults) {
-      setLastResults(JSON.parse(savedLastResults));
+    try {
+      if (savedLastResults) {
+        setLastResults(JSON.parse(savedLastResults));
+      }
+    } catch (error) {
+      console.error('Failed to parse last lottery results:', error);
     }
   }, []);
 
   useEffect(() => {
     if (showResults && lotteryResult.length > 0) {
-      const isWinner = checkWinner(lotteryResult);
+      const isWinner = checkWinner(lotteryResult, userAddress);
       setWinner(isWinner);
       setMessage(isWinner.message);
       setBalance(isWinner.newBalance);
     }
-  }, [lotteryResult]);
+  }, [lotteryResult, userAddress]);
+
+  const buyTicket = async () => {
+    if (hasActiveTicket) {
+      setMessage('You have already bought a ticket!');
+      return;
+    }
+
+    if (betAmount < 1 || betAmount > balance) {
+      setMessage('Invalid bet amount!');
+      return;
+    }
+
+    try {
+      const signer = await provider.getSigner(); // Get the signer
+      await placeBet(signer, 'LotteryGame', betAmount); // Pass the signer instead of userAddress
+      const newBalance = balance - betAmount;
+      setBalance(newBalance);
+      setTicket(Array.from({ length: 49 }, (_, i) => i + 1));
+      setMessage('Ticket bought successfully!');
+    } catch (error) {
+      setMessage('Failed to place bet: ' + error.message);
+    }
+  };
 
   const performDraw = () => {
-    const randomNumbers = [];
+    const randomNumbers = [1,2,3,4,5,6];
     while (randomNumbers.length < 6) {
       const randNum = Math.floor(Math.random() * 49) + 1;
       if (!randomNumbers.includes(randNum)) {
@@ -60,8 +118,8 @@ export const Lottery = ({ userAddress, initialBalance }) => {
     return results;
   };
 
-  const checkWinner = (results) => {
-    const matches = selectedNumbers.filter((num) => results.includes(num));
+  const checkWinner = async (lotteryResult, userAddress) => {
+    const matches = selectedNumbers.filter((num) => lotteryResult.includes(num));
     let multiplier = 0;
     let message = 'No prize this time, try again!';
 
@@ -78,22 +136,30 @@ export const Lottery = ({ userAddress, initialBalance }) => {
         multiplier = 2;
         message = `Congratulations ${userAddress}, you won the third prize!`;
         break;
+      case 3:
+        multiplier = 1;
+        message = `Congratulations ${userAddress}, you won the bid back!`;
+        break;
       default:
-        multiplier = -1;
+        multiplier = 0;
     }
 
     const newBalance = balance + betAmount * multiplier;
-    return { message, newBalance };
-  };
+    const isWinner = multiplier > 0;
 
-  const buyTicket = () => {
-    if (hasActiveTicket) {
-      setMessage('You have already bought a ticket!');
-      return;
+    if (isWinner) {
+      try {
+        const signer = await provider.getSigner();
+        await claimPrize(signer, betAmount * multiplier);
+        const newBalance = await getBalance(signer, userAddress);
+        return { message: 'Congratulations! Prize claimed successfully.', newBalance };
+      } catch (error) {
+        console.error('Error claiming prize:', error);
+        return { message: 'Failed to claim prize.', newBalance: balance };
+      }
+    } else {
+      return { message, newBalance };
     }
-
-    setTicket(Array.from({ length: 49 }, (_, i) => i + 1));
-    setMessage('Ticket bought successfully!');
   };
 
   const selectNumber = (number) => {
@@ -110,24 +176,23 @@ export const Lottery = ({ userAddress, initialBalance }) => {
       return;
     }
 
-    if (betAmount < 1|| betAmount > balance) {
-      setMessage('Invalid bet amount!');
-      return;
-    }
-
     // Save the ticket and perform the draw
     localStorage.setItem('lotteryTicket', JSON.stringify(selectedNumbers));
     setHasActiveTicket(true);
 
     const results = performDraw();
     setLotteryResult(results);
-
     // Show the results
     setShowResults(true);
   };
 
   const handleBetChange = (e) => {
-    setBetAmount(Number(e.target.value));
+    const value = e.target.value;
+
+    // Remove leading zeros
+    const cleanedValue = value.replace(/^0+(?!$)/, '');
+
+    setBetAmount(Number(cleanedValue));
   };
 
   const playAgain = () => {
@@ -138,8 +203,22 @@ export const Lottery = ({ userAddress, initialBalance }) => {
     setLotteryResult([]);
     setShowResults(false);
     setHasActiveTicket(false);
-    setBetAmount(0);
+    setBetAmount('');
     localStorage.removeItem('lotteryTicket');
+  };
+
+  const resetGame = () => {
+    localStorage.removeItem('lotteryTicket');
+    localStorage.removeItem('lastLotteryResult');
+    setWinner(null);
+    setMessage('');
+    setTicket([]);
+    setSelectedNumbers([]);
+    setLotteryResult([]);
+    setLastResults([]);
+    setHasActiveTicket(false);
+    setBetAmount('');
+    setShowResults(false);
   };
 
   const goBack = () => {
@@ -154,8 +233,8 @@ export const Lottery = ({ userAddress, initialBalance }) => {
       <p>Your balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
       <div className="bet-container">
         <label>
-          Bet amount: $
-          <input type="number" value={betAmount} onChange={handleBetChange} disabled={hasActiveTicket || showResults} />
+          Bet amount: EEC
+          <input type="number" value={betAmount} onChange={handleBetChange} disabled={hasActiveTicket || showResults} placeholder="Enter amount to bet" />
         </label>
         {!hasActiveTicket && !showResults && (
           <button onClick={buyTicket} className="buy-ticket-button">Buy Ticket</button>
@@ -197,6 +276,7 @@ export const Lottery = ({ userAddress, initialBalance }) => {
           <button onClick={playAgain} className="play-again-button">Play Again</button>
         </div>
       )}
+      <button onClick={resetGame} className="reset-button">Reset Game</button>
     </div>
   );
 };

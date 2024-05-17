@@ -32,10 +32,13 @@ export const Home = ({ userAddress }) => {
 
 
   useEffect(() => {
-
     const savedLastResults = localStorage.getItem('lastLotteryResult');
     if (savedLastResults) {
-      setLastResults(JSON.parse(savedLastResults));
+      try {
+        setLastResults(JSON.parse(savedLastResults));
+      } catch (error) {
+        console.error('Failed to parse lottery results from localStorage:', error);
+      }
     }
   }, []);
 

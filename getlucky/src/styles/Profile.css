@@ -16,7 +16,7 @@ body {
 
 .profile-container h1 {
   font-size: 3rem;
-  color: #ffdd57;
+  color: #daa520;
   margin-bottom: 30px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
@@ -27,7 +27,7 @@ body {
 }
 
 .back-button {
-  background-color: #ffdd57;
+  background-color: #daa520;
   border: none;
   color: #1e1e1e;
   padding: 10px 25px;
@@ -40,8 +40,39 @@ body {
 }
 
 .back-button:hover {
-  background-color: #e6c200;
+  background-color: #daa520;
   transform: scale(1.05);
+}
+
+.selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.selector-button {
+  background-color: #333;
+  border: 2px solid #daa520;
+  color: #daa520;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s, color 0.3s;
+  margin: 0 10px;
+}
+
+.selector-button:hover {
+  background-color: white;
+  color: #1e1e1e;
+  transform: scale(1.1);
+}
+
+.selector-button.active {
+  background-color: #daa520;
+  color: #1e1e1e;
+  transform: scale(1.1);
 }
 
 .add-funds-container {
@@ -52,7 +83,7 @@ body {
   padding: 12px;
   font-size: 1.2rem;
   border-radius: 5px;
-  border: 2px solid #ffdd57;
+  border: 2px solid #daa520;
   margin-right: 15px;
   color: #333;
 }
@@ -76,7 +107,7 @@ body {
 
 .fee-info {
   margin-top: 20px;
-  color: #ffdd57;
+  color: #daa520;
   font-size: 1rem;
   font-style: italic;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
@@ -93,8 +124,7 @@ body {
 .min-max-deposit {
   display: flex;
   justify-content: space-between;
-  background-color: #ffdd57;
+  background-color: #daa520;
   padding: 10px;
   border-radius: 5px;
 }
-

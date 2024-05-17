@@ -25,7 +25,7 @@ export const connectWallet = async (accountChangedHandler) => {
 };
 
 const eliEllaCoinContractAddress = "0xA0F12bdB6EE4e9022274046b63caCACB99966F34"
-const casinoContractAddress = "0xBAB1592980FF0c97803d8546250a3F94e3841BfC"
+const casinoContractAddress = "0x3F83d66B08a679FbA6348C9CA8D0095794023202"
 
 const getEliEllaCoinContract = (provider) => {
     return new ethers.Contract(eliEllaCoinContractAddress, eliEllaCoinABI, provider);
@@ -53,9 +53,13 @@ export const deposit = async (provider, amount) => {
 }
 
 export const withdraw = async (provider, amount) => {
+    const eliEllaCoinContract = getEliEllaCoinContract(provider);
     const casinoContract = getCasinoContract(provider);
     try {
-        const withdrawTx = await casinoContract.withdraw(amount);
+        console.log("Amount: ", amount);
+        const convertedAmount = BigInt(amount * 100);
+        console.log("Converted amount:", convertedAmount);
+        const withdrawTx = await casinoContract.withdraw(convertedAmount * BigInt(10) ** BigInt(16));
         await withdrawTx.wait();
         return withdrawTx;
     } catch (error) {
@@ -68,3 +72,38 @@ export const getBalance = async (provider, address) => {
     const balance = await casinoContract.getUserBalance(address);
     return balance / BigInt(10) ** BigInt(16);
 }
+
+export const placeBet = async (provider, game, amount) => {
+    const casinoContract = getCasinoContract(provider);
+    try {
+        const convertedAmount = BigInt(amount * 100); // Assuming token has 2 decimal places
+        const placeBetTx = await casinoContract.placeBet(game, convertedAmount * BigInt(10) ** BigInt(16));
+        await placeBetTx.wait();
+        return placeBetTx;
+    } catch (error) {
+        console.error("Error placing bet:", error);
+    }
+};
+
+export const drawResult = async (provider, game, winningNumbers) => {
+    const casinoContract = getCasinoContract(provider);
+    try {
+        const drawResultTx = await casinoContract.drawResult(game, winningNumbers);
+        await drawResultTx.wait();
+        return drawResultTx;
+    } catch (error) {
+        console.error("Error drawing result:", error);
+    }
+};
+
+export const claimPrize = async (provider, prizeAmount) => {
+    const casinoContract = getCasinoContract(provider);
+    try {
+        const convertedPrizeAmount = BigInt(prizeAmount * 100); // Assuming token has 2 decimal places
+        const claimPrizeTx = await casinoContract.claimPrize(convertedPrizeAmount * BigInt(10) ** BigInt(16));
+        await claimPrizeTx.wait();
+        return claimPrizeTx;
+    } catch (error) {
+        console.error("Error claiming prize:", error);
+    }
+};
