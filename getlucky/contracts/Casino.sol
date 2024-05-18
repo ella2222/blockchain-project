@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 import "./EliEllaCoin.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "./ICasino.sol";
 
-contract Casino is Initializable, OwnableUpgradeable {
+contract Casino is Initializable, OwnableUpgradeable, ICasino {
     EliEllaCoin public token;
 
     struct UserBalance {
@@ -19,16 +20,6 @@ contract Casino is Initializable, OwnableUpgradeable {
     uint256 public maxDepositAmount;
     uint256 public minWithdrawAmount;
     uint256 public maxWithdrawAmount;
-
-    event Deposited(address indexed user, uint256 amount, uint256 fee, uint256 timestamp);
-    event Withdrawn(address indexed user, uint256 amount, uint256 fee, uint256 timestamp);
-    event MinDepositAmountUpdated(uint256 newMinDepositAmount);
-    event MaxDepositAmountUpdated(uint256 newMaxDepositAmount);
-    event MinWithdrawAmountUpdated(uint256 newMinWithdrawAmount);
-    event MaxWithdrawAmountUpdated(uint256 newMaxWithdrawAmount);
-    event BetPlaced(address indexed user, string game, uint256 amount, uint256 timestamp);
-    event ResultDrawn(string game, uint256[] winningNumbers, uint256 timestamp);
-    event PrizeClaimed(address indexed user, uint256 prizeAmount, uint256 timestamp);
 
     function initialize(address tokenAddress, address initialOwner) public initializer {
         __Ownable_init(initialOwner);
