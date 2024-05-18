@@ -69,14 +69,31 @@ export const Roulette = ({}) => {
       alert("Please select a number or category before spinning.");
       return;
     }
-    if (betAmount < 1 || betAmount > balance) {
-      setMessage('Invalid bet amount! Bet must be at least 1 EEC and not more than your current balance.');
+    const bet = Number(betAmount);
+
+    console.log("Balance: ", Number(balance) / 100)
+    console.log("Bet: ", bet)
+
+    if (bet < 1 || bet > Number(balance) / 100) {
+      alert("Invalid bet amount! Bet must be at least 1 EEC and not more than your current balance.")
       return;
     }
+
     if (!isSpinning) {
       try {
         const signer = await provider.getSigner();
-        await placeBet(signer, 'RouletteGame', betAmount);
+        const tx = await placeBet(signer, 'RouletteGame', betAmount);
+        if (!tx) {
+          throw new Error('Transaction was not created. Please try again.');
+        }
+
+        const receipt = await tx.wait(); // Wait for the transaction to be mined
+
+        if (receipt.status === 0) {
+          alert('Transaction failed!');
+          setMessage('Transaction failed!');
+          return;
+        }
 
         setIsSpinning(true);
         const randomIndex = Math.floor(Math.random() * numbers.length);
@@ -96,33 +113,36 @@ export const Roulette = ({}) => {
               }
             } else if (selectedNumbers.length === 12) {
               multiplier = 3; // Full line or 1-12, 13-24, 25-36
-            }
-            else if (selectedNumbers.length === 18) {
+            } else if (selectedNumbers.length === 18) {
               multiplier = 2; // Even, Odd, Red, Black, 1-18, 19-36
-            }
-            else if (selectedNumbers.length <= 12) {
+            } else if (selectedNumbers.length <= 12) {
               multiplier = 3; // 1-12, 13-24, 25-36
             }
           }
 
           if (multiplier > 0) {
-            const winnings = betAmount * multiplier;
+            const winnings = bet * multiplier * 100; // Ajustăm balanța în funcție de unități
             try {
-              await claimPrize(signer, winnings);
+              await claimPrize(signer, bet * multiplier);
               const updatedBalance = await getBalance(signer, userAddress);
               setBalance(updatedBalance);
-              setMessage(`Congratulations! You won ${winnings} EEC!`);
+              setMessage(`Congratulations! You won ${(winnings / 100).toFixed(2)} EEC!`);
             } catch (error) {
               console.error('Error claiming prize:', error);
               setMessage('Failed to claim prize.');
             }
           } else {
-            setBalance(balance - betAmount);
+            setBalance(Number(balance) - (bet * 100)); // Ajustăm balanța în funcție de unități
             setMessage('Sorry, try again!');
           }
         }, 1000);
       } catch (error) {
-        console.error('Failed to place bet:', error);
+        if (error.code === 4001) { // User rejected the transaction
+          alert('Transaction rejected by the user.');
+        } else {
+          console.error('Failed to place bet:', error);
+          alert('Failed to place bet: ' + error.message);
+        }
         setMessage('Failed to place bet: ' + error.message);
       }
     }
@@ -154,7 +174,7 @@ export const Roulette = ({}) => {
       <p>Your balance: {(Number(balance) / 100).toFixed(2)} EEC</p>
       <div className="bet-container">
         <label>
-          Bet amount: $
+          Bet amount: EEC
           <input type="number" value={betAmount} onChange={handleBetChange} disabled={isSpinning || hasPlayed} />
         </label>
       </div>

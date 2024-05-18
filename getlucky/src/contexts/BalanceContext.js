@@ -23,6 +23,7 @@ export const BalanceProvider = ({ children }) => {
           const signer = await provider.getSigner();
           const balance = await getBalance(signer, userAddress);
           setBalance(Number(balance));
+          // console.log("Balance: ", balance)
         } catch (error) {
           console.error("Failed to fetch balance:", error);
         }

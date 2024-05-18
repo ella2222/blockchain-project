@@ -1,139 +1,184 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  color: #ffffff;
+}
+
 .dice-container {
-    padding: 20px;
-    text-align: center;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    min-height: 100vh;
-  }
-  
-  .dice-container h1 {
-    font-size: 2.5rem;
-    color: #daa520;
-    margin-bottom: 20px;
-  }
-  
-  .dice-container p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-  }
-  
-  .back-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-    margin-bottom: 20px;
-  }
-  
-  .back-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .bet-container {
-    margin-bottom: 20px;
-  }
-  
-  .bet-container label {
-    font-size: 1rem;
-    margin-right: 10px;
-  }
-  
-  .bet-container input {
-    padding: 5px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .play-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-    margin-left: 10px;
-  }
-  
-  .play-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .dice-results {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .dice {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  
-  .user-dice, .computer-dice {
-    text-align: center;
-    align-items: center;
-    padding: 40px;
-  }
-  
-  .dice-face {
-    width: 60px;
-    height: 60px;
-    margin: 10px;
-    font-size: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #ffffff;
-    color: #333;
-    border-radius: 10px;
-    border: 2px solid #daa520;
-    transition: transform 0.2s;
-  }
-  
-  .rolling .dice-face {
-    animation: rolling 1s infinite;
-  }
-  
-  @keyframes rolling {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(90deg); }
-    50% { transform: rotate(180deg); }
-    75% { transform: rotate(270deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .message {
-    font-weight: bold;
-    margin-top: 20px;
-  }
-  
-  .replay-button {
-    background-color: #28a745;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-  }
-  
-  .replay-button:hover {
-    background-color: #218838;
-    transform: scale(1.05);
-  }
-  
+  padding: 40px 20px;
+  text-align: center;
+  background-color: rgba(30, 30, 30, 0.8);
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.dice-container h1 {
+  font-size: 3rem;
+  color: #daa520;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #daa520;
+}
+
+.dice-container p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #cccccc;
+}
+
+.back-button {
+  background-color: #daa520;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.3s, box-shadow 0.3s;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+  background-color: #b8860b;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.bet-container {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bet-container label {
+  font-size: 1.2rem;
+}
+
+.bet-container input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.bet-container input:focus {
+  border-color: #daa520;
+}
+
+.play-button {
+  background: linear-gradient(45deg, #daa520, #ffdd57);
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-left: 10px;
+}
+
+.play-button:hover {
+  background-color: #b8860b;
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dice-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dice {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.user-dice, .computer-dice {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  width: 160px; /* Ensuring both sections are the same width */
+}
+
+.dice-face {
+  width: 60px;
+  height: 60px;
+  margin: 10px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  color: #333;
+  border-radius: 10px;
+  border: 2px solid #daa520;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dice-face:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.rolling .dice-face {
+  animation: rolling 1s infinite;
+}
+
+@keyframes rolling {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.message {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  color: #ffdd57;
+  text-shadow: 0 0 10px #ffdd57;
+}
+
+.replay-button {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.replay-button:hover {
+  background-color: #218838;
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}

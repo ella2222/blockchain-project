@@ -1,179 +1,179 @@
-.lottery-container {
-    padding: 20px;
-    text-align: center;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    min-height: 100vh;
-  }
-  
-  .lottery-container h1 {
-    font-size: 2.5rem;
-    color: #daa520;
-    margin-bottom: 20px;
-  }
-  
-  .lottery-container p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-  }
-  
-  .buy-ticket-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 15px 30px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-  }
-  
-  .buy-ticket-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .ticket {
-    margin-top: 20px;
-  }
-  
-  .ticket h2 {
-    font-size: 1.5rem;
-    color: #daa520;
-    margin-bottom: 20px;
-  }
-  
-  .ticket-container {
-    background: linear-gradient(to bottom right, #3d3d3d, #1e1e1e);
-    border: 2px solid #daa520;
-    border-radius: 10px;
-    padding: 20px;
-    display: inline-block;
-  }
-  
-  .numbers {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .number {
-    background-color: #333;
-    border: 1px solid #daa520;
-    color: white;
-    padding: 10px 20px;
-    margin: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    border-radius: 50%;
-  }
-  
-  .number.selected {
-    background-color: #daa520;
-    transform: scale(1.1);
-  }
-  
-  .number:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .submit-ticket-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 15px 30px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    margin-top: 20px;
-    transition: background-color 0.3s ease, transform 0.3s;
-  }
-  
-  .submit-ticket-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .message {
-    margin-top: 20px;
-    font-weight: bold;
-  }
-  
-  .winner-announcement {
-    margin-top: 40px;
-  }
-  
-  .winner-announcement h2 {
-    font-size: 2rem;
-    color: #daa520;
-  }
-  
-  .winner-announcement p {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .lottery-result {
-    margin-top: 40px;
-  }
-  
-  .lottery-result h2 {
-    font-size: 2rem;
-    color: #daa520;
-  }
-  
-  .lottery-result p {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .selected-numbers {
-    margin-top: 20px;
-  }
-  
-  .selected-numbers h3 {
-    font-size: 1.5rem;
-    color: #daa520;
-  }
-  
-  .selected-numbers p {
-    font-size: 1.2rem;
-    margin-top: 10px;
-  }
-  
-  .play-again-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .play-again-button:hover {
-    background-color: #218838;
-  }
+/* General Styles */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  color: #ffffff;
+}
 
-  .back-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-    margin-bottom: 20px;
-  }
-  
-  .back-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  
+.lottery-container {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: rgba(30, 30, 30, 0.8);
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.lottery-container h1 {
+  font-size: 3rem;
+  color: #daa520;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #daa520;
+}
+
+.lottery-container p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #cccccc;
+}
+
+button {
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin: 10px;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.buy-ticket-button,
+.submit-ticket-button,
+.back-button {
+  background-color: #daa520;
+}
+
+.buy-ticket-button:hover,
+.submit-ticket-button:hover,
+.back-button:hover {
+  background-color: #b8860b;
+}
+
+.play-again-button {
+  background-color: #28a745;
+}
+
+.play-again-button:hover {
+  background-color: #218838;
+}
+
+.ticket {
+  margin-top: 20px;
+}
+
+.ticket h2 {
+  font-size: 1.5rem;
+  color: #daa520;
+  margin-bottom: 20px;
+  text-shadow: 0 0 5px #daa520;
+}
+
+.ticket-container {
+  background: linear-gradient(to bottom right, #3d3d3d, #1e1e1e);
+  border: 2px solid #daa520;
+  border-radius: 15px;
+  padding: 30px;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.numbers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.number {
+  background-color: #333;
+  border: 2px solid #daa520;
+  color: white;
+  padding: 15px 25px;
+  margin: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.number.selected {
+  background-color: #daa520;
+  color: #333;
+  transform: scale(1.1);
+}
+
+.number:hover {
+  background-color: #b8860b;
+  transform: scale(1.1);
+}
+
+.message {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #daa520;
+  text-shadow: 0 0 5px #daa520;
+}
+
+.winner-announcement {
+  margin-top: 40px;
+}
+
+.winner-announcement h2 {
+  font-size: 2rem;
+  color: #daa520;
+  text-shadow: 0 0 10px #daa520;
+}
+
+.winner-announcement p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.lottery-result {
+  margin-top: 40px;
+}
+
+.lottery-result h2 {
+  font-size: 2rem;
+  color: #daa520;
+  text-shadow: 0 0 10px #daa520;
+}
+
+.lottery-result p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.selected-numbers {
+  margin-top: 20px;
+}
+
+.selected-numbers h3 {
+  font-size: 1.5rem;
+  color: #daa520;
+  text-shadow: 0 0 5px #daa520;
+}
+
+.selected-numbers p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #cccccc;
+}

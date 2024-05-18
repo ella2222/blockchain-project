@@ -1,190 +1,183 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', serif;
-    background-color: #1e1e1e;
-    color: #ffffff;
-  }
-  
-  .home-container {
-    padding: 20px;
-    text-align: center;
-    background-color: #1e1e1e;
-    min-height: 100vh;
-  }
-  
-  .home-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #000000;
-    border-bottom: 2px solid #daa520;
-  }
-  
-  .home-title {
-    font-size: 2.5rem;
-    color: #daa520;
-    font-weight: bold;
-  }
-  
-  .logo-container-home {
-    display: flex;
-    align-items: center;
-  }
-  
-  .logo-home {
-    width: 50px;
-    margin-right: 10px;
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);
-  }
-  
-  .user-profile {
-    position: relative;
-  }
-  
-  .profile-button {
-    background: none;
-    border: none;
-    cursor: pointer;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+}
 
-  }
-  
-  .profile-icon {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .profile-menu {
-    position: fixed;
-    top: 0;
-    right: 0;
-    background-color: #222222;
-    border-left: 2px solid #daa520;
-    padding: 20px;
-    width: 300px;
-    height: 100%;
-    text-align: left;
-    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease;
-    transform: translateX(100%);
-    z-index: 1000;
-  }
-  
-  .profile-menu.open {
-    transform: translateX(0);
-  }
-  
-  .profile-menu .close-button {
-    background: none;
-    border: none;
-    color: #daa520;
-    font-size: 1.5rem;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 10px;
-  }
-  
-  .profile-menu p {
-    margin: 60px 0 20px;
-    color: #daa520;
-    font-weight: bold;
-  }
-  
-  .profile-menu button {
-    background-color: transparent;
-    border: none;
-    color: #daa520;
-    padding: 10px 0;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    font-weight: bold;
-  }
-  
-  .profile-menu button:hover {
-    background-color: #daa520;
-    color: #111111;
-    border-radius: 5px;
-    
-  }
-  
-  .games-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 50px;
-  }
-  
-  .game-card {
-    background-color: #222222;
-    border: 2px solid #daa520;
-    border-radius: 10px;
-    margin: 20px;
-    padding: 20px;
-    width: 250px;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  }
-  
-  .game-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(218, 165, 32, 0.7);
-  }
-  
-  .game-thumbnail {
-    width: 100%;
-    border-radius: 10px;
-  }
-  
-  .game-title {
-    margin-top: 10px;
-    color: #daa520;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-  
-  .games-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-  }
+.home-container {
+  padding: 20px;
+  text-align: center;
+  background-color: #121212;
+  min-height: 100vh;
+}
 
-  
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1f1f1f;
+  border-bottom: 2px solid #ffaa00;
+}
+
+.home-title {
+  font-size: 2.5rem;
+  color: #ffaa00;
+  font-weight: bold;
+}
+
+.logo-container-home {
+  display: flex;
+  align-items: center;
+}
+
+.logo-home {
+  width: 50px;
+  margin-right: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.8);
+}
+
+.user-profile {
+  position: relative;
+}
+
+.profile-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ffaa00;
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.8);
+}
+
+.profile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #1f1f1f;
+  border-left: 2px solid #ffaa00;
+  padding: 20px;
+  width: 300px;
+  height: 100%;
+  text-align: left;
+  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+  transform: translateX(100%);
+  z-index: 1000;
+}
+
+.profile-menu.open {
+  transform: translateX(0);
+}
+
+.profile-menu .close-button {
+  background: none;
+  border: none;
+  color: #ffaa00;
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 10px;
+}
+
+.profile-menu p {
+  margin: 60px 0 20px;
+  color: #ffaa00;
+  font-weight: bold;
+}
+
+.profile-menu button {
+  background-color: transparent;
+  border: none;
+  color: #ffaa00;
+  padding: 10px 0;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-weight: bold;
+}
+
+.profile-menu button:hover {
+  background-color: #ffaa00;
+  color: #1f1f1f;
+  border-radius: 5px;
+}
+
+.games-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 50px;
+}
+
+.game-card {
+  background-color: #1f1f1f;
+  border: 2px solid #ffaa00;
+  border-radius: 10px;
+  margin: 20px;
+  padding: 20px;
+  width: 250px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.7);
+}
+
+.game-thumbnail {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.game-title {
+  margin-top: 10px;
+  color: #ffaa00;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
 .ticker-container {
-    width: 100%;
-    overflow: hidden;
-    border-bottom: 1px solid #daa520;
-    margin: 20px 0;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid #ffaa00;
+  margin: 20px 0;
+}
+
+.ticker-wrap {
+  display: flex;
+  animation: ticker 30s linear infinite;
+}
+
+.ticker-move {
+  display: flex;
+  white-space: nowrap;
+}
+
+.ticker-item {
+  display: inline-block;
+  padding: 0 50px;
+  font-size: 1.2rem;
+  color: #ffaa00;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(100%);
   }
-  
-  .ticker-wrap {
-    display: flex;
-    animation: ticker 30s linear infinite;
+  100% {
+    transform: translateX(-100%);
   }
-  
-  .ticker-move {
-    display: flex;
-    white-space: nowrap;
-  }
-  
-  .ticker-item {
-    display: inline-block;
-    padding: 0 50px;
-    font-size: 1.2rem;
-    color: #daa520;
-  }
-  
-  @keyframes ticker {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-  
+}

@@ -13,7 +13,7 @@ export const Home = ({ userAddress }) => {
   const toggleProfileMenu = () => {
     setShowProfileMenu(!showProfileMenu);
   };
-  
+
   const {wallet, initializeWallet} = useWallet();
 
   const handleLogout = (e) => {
@@ -29,7 +29,6 @@ export const Home = ({ userAddress }) => {
 
   const [timeLeft, setTimeLeft] = useState(0);
   const [lastResults, setLastResults] = useState([]);
-
 
   useEffect(() => {
     const savedLastResults = localStorage.getItem('lastLotteryResult');
@@ -58,12 +57,12 @@ export const Home = ({ userAddress }) => {
       <div className="ticker-container">
         <div className="ticker-wrap">
           <div className="ticker-move">
-            <div className="ticker-item">Last winning numbers: {lastResults.join(', ')}</div>
-            <div className="ticker-item">Buy your ticket now and win big!</div>
-            <div className="ticker-item">Lottery ticket price: 10 EliEllaCoins</div>
-            <div className="ticker-item">Roulette ticket price: 5 EliEllaCoins</div>
-            <div className="ticker-item">Dice ticket price: 2 EliEllaCoins</div>
-            <div className="ticker-item">Your current balance: {(Number(balance) / 100).toFixed(2)} EEC</div>
+            <div className="ticker-item">🎉 Last winning numbers: {lastResults.join(', ')}</div>
+            <div className="ticker-item">🎟️ Buy your ticket now and win big!</div>
+            <div className="ticker-item">🍀 Try your luck at the lottery!</div>
+            <div className="ticker-item">🎡 Spin the wheel and win big!</div>
+            <div className="ticker-item">🎲 Roll the dices to see what the future holds!</div>
+            <div className="ticker-item">💰 Your current balance: {(Number(balance) / 100).toFixed(2)} EEC</div>
           </div>
         </div>
       </div>

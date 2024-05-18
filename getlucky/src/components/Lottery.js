@@ -84,20 +84,42 @@ export const Lottery = ({}) => {
       return;
     }
 
-    if (betAmount < 1 || betAmount > balance) {
-      setMessage('Invalid bet amount!');
+    const bet = Number(betAmount);
+
+    console.log("Bet: ", bet);
+    console.log("Balance: ", balance);
+
+    if (bet < 1 || bet > Number(balance) / 100) {
+      alert('You do not have enough balance to place this bet!');
       return;
     }
 
     try {
-      const signer = await provider.getSigner(); // Get the signer
-      await placeBet(signer, 'LotteryGame', betAmount); // Pass the signer instead of userAddress
-      const newBalance = balance - betAmount;
+      const signer = await provider.getSigner();
+      const tx = await placeBet(signer, 'LotteryGame', betAmount);
+      if (!tx) {
+        throw new Error('Transaction was not created. Please try again.');
+      }
+
+      const receipt = await tx.wait(); // Wait for the transaction to be mined
+
+      if (receipt.status === 0) {
+        alert('Transaction failed!');
+        setMessage('Transaction failed!');
+        return;
+      }
+
+      const newBalance = Number(balance) - (bet * 100); // Ajustăm balanța în funcție de unități
       setBalance(newBalance);
-      setTicket(Array.from({ length: 49 }, (_, i) => i + 1)); // Set the ticket only if placeBet succeeds
+      setTicket(Array.from({ length: 49 }, (_, i) => i + 1));
       setMessage('Ticket bought successfully!');
     } catch (error) {
-      setMessage('Failed to place bet: ' + error.message);
+      if (error.code === 4001) { // User rejected the transaction
+        alert('Transaction rejected by the user.');
+      } else {
+        console.error('Failed to place bet:', error);
+        alert('Failed to place bet: ' + error.message);
+      }
       setTicket([]); // Ensure ticket is empty if the bet fails
     }
   };
@@ -145,7 +167,7 @@ export const Lottery = ({}) => {
         multiplier = 0;
     }
 
-    const newBalance = balance + betAmount * multiplier;
+    const newBalance = Number(balance) + (betAmount * multiplier * 100); // Ajustăm balanța în funcție de unități
     setMessage(message);
     if (multiplier > 0) {
       try {
@@ -153,6 +175,7 @@ export const Lottery = ({}) => {
         await claimPrize(signer, betAmount * multiplier);
         const updatedBalance = await getBalance(signer, userAddress);
         setBalance(updatedBalance);
+        console.log("Updated Balance: ", updatedBalance);
         setMessage('Congratulations! Prize claimed successfully.');
       } catch (error) {
         console.error('Error claiming prize:', error);
@@ -160,6 +183,7 @@ export const Lottery = ({}) => {
       }
     } else {
       setBalance(newBalance);
+      console.log("Updated Balance2: ", newBalance);
     }
   };
 
@@ -275,7 +299,6 @@ export const Lottery = ({}) => {
           <button onClick={playAgain} className="play-again-button">Play Again</button>
         </div>
       )}
-      <button onClick={resetGame} className="reset-button">Reset Game</button>
     </div>
   );
 };

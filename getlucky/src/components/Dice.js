@@ -45,14 +45,27 @@ export const Dice = () => {
   };
 
   const playGame = async () => {
-    if (betAmount <= 0 || betAmount > balance) {
-      setMessage('Invalid bet amount!');
+    const bet = Number(betAmount);
+
+    if (bet <= 0 || bet > Number(balance) / 100) {
+      alert("Invalid bet amount! Bet must be at least 1 EEC and not more than your current balance.")
       return;
     }
 
     try {
       const signer = await provider.getSigner();
-      await placeBet(signer, 'DiceGame', betAmount);
+      const tx = await placeBet(signer, 'DiceGame', betAmount);
+      if (!tx) {
+        throw new Error('Transaction was not created. Please try again.');
+      }
+
+      const receipt = await tx.wait(); // Wait for the transaction to be mined
+
+      if (receipt.status === 0) {
+        alert('Transaction failed!');
+        setMessage('Transaction failed!');
+        return;
+      }
 
       setIsRolling(true);
       setTimeout(() => {
@@ -68,20 +81,26 @@ export const Dice = () => {
         setIsRolling(false);
 
         if ((userTotal > computerTotal) || (userTotal === 2 && computerTotal !== 2)) {
-          const prizeAmount = betAmount * 2;
-          claimPrize(signer, prizeAmount);
+          const prizeAmount = bet * 2 * 100; // Adjust prize amount
+          claimPrize(signer, bet * 2);
           getBalance(signer, userAddress).then(newBalance => {
             setBalance(newBalance);
-            setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${prizeAmount} EEC!`);
+            setMessage(`You win! Your total: ${userTotal}, Computer's total: ${computerTotal}. You won ${(prizeAmount / 100).toFixed(2)} EEC!`);
           });
         } else if ((userTotal < computerTotal) || (userTotal !== 2 && computerTotal === 2)) {
-          setBalance(balance - betAmount);
-          setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${betAmount} EEC!`);
+          setBalance(Number(balance) - (bet * 100)); // Adjust balance
+          setMessage(`You lose! Your total: ${userTotal}, Computer's total: ${computerTotal}. You lost ${bet} EEC!`);
         } else {
           setMessage(`It's a draw! Your total: ${userTotal}, Computer's total: ${computerTotal}.`);
         }
       }, 1000);
     } catch (error) {
+      if (error.code === 4001) { // User rejected the transaction
+        alert('Transaction rejected by the user.');
+      } else {
+        console.error('Failed to place bet:', error);
+        alert('Failed to place bet: ' + error.message);
+      }
       setMessage('Failed to place bet: ' + error.message);
     }
   };

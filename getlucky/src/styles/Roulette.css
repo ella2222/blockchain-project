@@ -1,141 +1,189 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  color: #ffffff;
+}
+
+.roulette-container {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: rgba(30, 30, 30, 0.8);
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.roulette-title {
+  font-size: 3rem;
+  color: #daa520;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #daa520;
+}
+
+.bet-container {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bet-container label {
+  font-size: 1.2rem;
+}
+
+.bet-container input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.bet-container input:focus {
+  border-color: #daa520;
+}
+
+.betting-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.numbers-table {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border-radius: 50%;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.numbers-table:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.green {
+  background-color: green;
+}
+
+.red {
+  background-color: red;
+}
+
+.black {
+  background-color: black;
+}
+
+.betting-category {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #daa520;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s;
+}
+
+.betting-category:hover {
+  background-color: #b8860b;
+  transform: scale(1.05);
+}
+
+.spin-button-container {
+  margin-top: 20px;
+}
+
+.spin-button {
+  background: linear-gradient(45deg, #daa520, #ffdd57);
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.spin-button:hover {
+  background-color: #b8860b;
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.result-display {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  color: #ffdd57;
+  text-shadow: 0 0 10px #ffdd57;
+}
+
+.message {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.play-again-button {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.play-again-button:hover {
+  background-color: #218838;
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
 .back-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-    margin-bottom: 20px;
-  }
-  
-  .back-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .roulette-container {
-    padding: 20px;
-    text-align: center;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    min-height: 100vh;
-  }
-  
-  .roulette-title {
-    font-size: 2.5rem;
-    color: #daa520;
-    margin-bottom: 20px;
-  }
-  
-  .bet-container {
-    margin-bottom: 20px;
-  }
-  
-  .bet-container label {
-    font-size: 1rem;
-    margin-right: 10px;
-  }
-  
-  .bet-container input {
-    padding: 5px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .betting-table {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .row {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-  }
-  
-  .numbers-table {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    border-radius: 50%;
-    margin: 5px;
-    cursor: pointer;
-  }
-  
-  .green {
-    background-color: green;
-  }
-  
-  .red {
-    background-color: red;
-  }
-  
-  .black {
-    background-color: black;
-  }
-  
-  .betting-category {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #daa520;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .spin-button-container {
-    margin-top: 20px;
-  }
-  
-  .spin-button {
-    background-color: #daa520;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-  }
-  
-  .spin-button:hover {
-    background-color: #b8860b;
-    transform: scale(1.05);
-  }
-  
-  .result-display {
-    margin-top: 20px;
-  }
-  
-  .message {
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  
-  .play-again-button {
-    background-color: #28a745;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.3s;
-  }
-  
-  .play-again-button:hover {
-    background-color: #218838;
-    transform: scale(1.05);
-  }
-  
+  background-color: #daa520;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.3s;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+  background-color: #b8860b;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
