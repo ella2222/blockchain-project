@@ -35,13 +35,49 @@ const getCasinoContract = (provider) => {
     return new ethers.Contract(casinoContractAddress, casinoABI, provider);
 }
 
+const GAS_COSTS = {
+    BASE_TX: 21000,
+    ZERO_BYTE: 4,
+    NON_ZERO_BYTE: 16,
+};
+
+const calculateDataCost = (data) => {
+    let zeroBytes = 0;
+    let nonZeroBytes = 0;
+
+    for (let i = 0; i < data.length; i += 2) {
+        if (data.substring(i, i + 2) === '00') {
+            zeroBytes++;
+        } else {
+            nonZeroBytes++;
+        }
+    }
+
+    return (zeroBytes * GAS_COSTS.ZERO_BYTE) + (nonZeroBytes * GAS_COSTS.NON_ZERO_BYTE);
+};
+
+const estimateGasForFunction = (contract, functionName, ...args) => {
+    const functionFragment = contract.interface.getFunction(functionName);
+    const functionSignature = contract.interface.encodeFunctionData(functionFragment, args);
+    const dataCost = calculateDataCost(functionSignature.substring(2)); // Remove '0x' prefix
+
+    // This is a very rough estimation. For more accuracy, you would need to analyze the EVM opcodes.
+    const executionCostEstimate = 30000; // Placeholder value, depends on the complexity of the function
+
+    return GAS_COSTS.BASE_TX + dataCost + executionCostEstimate;
+};
+
+export { getEliEllaCoinContract, getCasinoContract, estimateGasForFunction, eliEllaCoinContractAddress, casinoContractAddress };
+
 export const deposit = async (provider, amount) => {
     const eliEllaCoinContract = getEliEllaCoinContract(provider);
     const casinoContract = getCasinoContract(provider);
-    try{
+
+    try {
         console.log("Amount: ", amount);
         const convertedAmount = BigInt(amount * 100);
         console.log("Converted amount:", convertedAmount);
+
         const approveTx = await eliEllaCoinContract.approve(casinoContractAddress, convertedAmount * BigInt(10) ** BigInt(16));
         await approveTx.wait();
         const depositTx = await casinoContract.deposit(convertedAmount * BigInt(10) ** BigInt(16));

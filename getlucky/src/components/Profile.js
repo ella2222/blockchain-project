@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../utils/Context';
-import { getBalance, deposit, withdraw } from '../utils/EthersUtils';
+import { getBalance, deposit, withdraw, getEliEllaCoinContract, getCasinoContract, estimateGasForFunction, casinoContractAddress } from '../utils/EthersUtils';
 import { useBalance } from '../contexts/BalanceContext'; // Adjust the path as necessary
 
 const { ethers } = require('ethers');
@@ -36,7 +36,7 @@ const calculateFee = (amount) => {
   }
 };
 
-const Deposit = ({ amountToAdd, handleAmountChange, handleAddFunds, depositAmount, taxAmount }) => (
+const Deposit = ({ amountToAdd, handleAmountChange, handleAddFunds, depositAmount, taxAmount, gasEstimate }) => (
   <div>
     <div className="min-max-deposit">
         <p style={{color:"black"}}>Minimum deposit: 10 EEC</p>
@@ -53,6 +53,8 @@ const Deposit = ({ amountToAdd, handleAmountChange, handleAddFunds, depositAmoun
       <div className="deposit-amount-and-fees">
         <p>Deposit Amount: {(Number(depositAmount)).toFixed(2)} EEC</p>
         <p>Fee: {(Number(taxAmount)).toFixed(2)} EEC</p>
+        <p>Estimated Gas: {gasEstimate} units</p>
+        <p>Estimated Fee: {gasEstimate ? `${ethers.formatEther(gasEstimate)} ETH` : 'Calculating...'} </p>
       </div>
       <div className="fee-info">
         <p>Note: A fee will be applied when depositing funds.</p>
@@ -62,7 +64,7 @@ const Deposit = ({ amountToAdd, handleAmountChange, handleAddFunds, depositAmoun
   </div>
 );
 
-const Withdraw = ({ amountToWithdraw, handleWithdrawAmountChange, handleWithdrawFunds, withdrawAmount, withdrawTaxAmount }) => (
+const Withdraw = ({ amountToWithdraw, handleWithdrawAmountChange, handleWithdrawFunds, withdrawAmount, withdrawTaxAmount, gasEstimate }) => (
   <div>
     <div className="min-max-deposit">
         <p style={{color:"black"}}>Minimum withdraw: 10 EEC</p>
@@ -79,6 +81,8 @@ const Withdraw = ({ amountToWithdraw, handleWithdrawAmountChange, handleWithdraw
       <div className="deposit-amount-and-fees">
         <p>Withdraw Amount: {(Number(withdrawAmount)).toFixed(2)} EEC</p>
         <p>Fee: {(Number(withdrawTaxAmount)).toFixed(2)} EEC</p>
+        <p>Estimated Gas: {gasEstimate} units</p>
+        <p>Estimated Fee: {gasEstimate ? `${ethers.formatEther(gasEstimate)} ETH` : 'Calculating...'} </p>
       </div>
       <div className="fee-info">
         <p>Note: A fee will be applied when withdrawing funds.</p>
@@ -97,6 +101,9 @@ export const Profile = () => {
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [withdrawTaxAmount, setWithdrawTaxAmount] = useState(0);
   const [selectedPage, setSelectedPage] = useState('deposit');
+  const [depositGasEstimate, setDepositGasEstimate] = useState(0);
+  const [withdrawGasEstimate, setWithdrawGasEstimate] = useState(0);
+  const [gasPrice, setGasPrice] = useState(0);
   const navigate = useNavigate();
   const { wallet } = useWallet();
   const { balance, setBalance } = useBalance();
@@ -107,42 +114,57 @@ export const Profile = () => {
     });
   }, []);
 
-  const handleAmountChange = (event) => {
+  const handleAmountChange = async (event) => {
     let value = event.target.value;
-  
-    // Remove leading zeros
     value = value.replace(/^0+(?!$)/, '');
-  
     const amount = parseFloat(value);
     if (!isNaN(amount) && amount > 0) {
       const fee = calculateFee(amount);
       setTaxAmount(fee);
       setDepositAmount(amount - fee);
+
+      // Estimate gas for deposit
+      try {
+        const signer = await provider.getSigner();
+        const gasEstimate = await estimateGasForFunction(getEliEllaCoinContract(signer), 'approve', casinoContractAddress, BigInt(amount * 100) * BigInt(10) ** BigInt(16));
+        setDepositGasEstimate(gasEstimate);
+      } catch (error) {
+        console.error("Failed to estimate gas for deposit:", error);
+        setDepositGasEstimate(0);
+      }
     } else {
       setTaxAmount(0);
       setDepositAmount(0);
+      setDepositGasEstimate(0);
     }
     setAmountToAdd(value);
   };
-  
-  const handleWithdrawAmountChange = (event) => {
+
+  const handleWithdrawAmountChange = async (event) => {
     let value = event.target.value;
-  
-    // Remove leading zeros
     value = value.replace(/^0+(?!$)/, '');
-  
     const amount = parseFloat(value);
     if (!isNaN(amount) && amount > 0) {
       const fee = calculateFee(amount);
       setWithdrawTaxAmount(fee);
       setWithdrawAmount(amount - fee);
+
+      // Estimate gas for withdraw
+      try {
+        const signer = await provider.getSigner();
+        const gasEstimate = await estimateGasForFunction(getCasinoContract(signer), 'withdraw', BigInt(amount * 100) * BigInt(10) ** BigInt(16));
+        setWithdrawGasEstimate(gasEstimate);
+      } catch (error) {
+        console.error("Failed to estimate gas for withdraw:", error);
+        setWithdrawGasEstimate(0);
+      }
     } else {
       setWithdrawTaxAmount(0);
       setWithdrawAmount(0);
+      setWithdrawGasEstimate(0);
     }
     setAmountToWithdraw(value);
   };
-  
 
   const handleAddFunds = async () => {
     const parsedAmount = parseFloat(amountToAdd);
@@ -242,6 +264,7 @@ export const Profile = () => {
         handleAddFunds={handleAddFunds}
         depositAmount={depositAmount}
         taxAmount={taxAmount}
+        gasEstimate={depositGasEstimate}
       />;
     } else if (selectedPage === 'withdraw') {
       return <Withdraw
@@ -250,6 +273,7 @@ export const Profile = () => {
         handleWithdrawFunds={handleWithdrawFunds}
         withdrawAmount={withdrawAmount}
         withdrawTaxAmount={withdrawTaxAmount}
+        gasEstimate={withdrawGasEstimate}
       />;
     }
   };
